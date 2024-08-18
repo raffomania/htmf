@@ -1,31 +1,6 @@
 use std::borrow::Cow;
 
-pub fn a<'a, const A: usize, S, C>(attrs: [(&'static str, S); A], children: C) -> Element<'a>
-where
-    S: Into<Cow<'a, str>>,
-    C: Into<Vec<Element<'a>>>,
-{
-    Element::Tag {
-        tag: "a".to_string(),
-        attrs: attrs.into_iter().map(|(k, v)| (k, v.into())).collect(),
-        children: children.into(),
-    }
-}
-
-pub fn href(target: &str) -> (&'static str, &str) {
-    ("href", target)
-}
-
-pub fn class(target: &str) -> (&'static str, &str) {
-    ("class", target)
-}
-
-pub fn text<'a, C>(content: C) -> Element<'a>
-where
-    C: Into<Cow<'a, str>>,
-{
-    Element::Text(content.into())
-}
+pub mod declare;
 
 type Attr<'a> = (&'static str, Cow<'a, str>);
 
@@ -63,6 +38,8 @@ impl<'a> Element<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use declare::*;
 
     #[test]
     fn it_works() {

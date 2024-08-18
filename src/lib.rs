@@ -16,6 +16,17 @@ pub fn href(target: &str) -> (&'static str, &str) {
     ("href", target)
 }
 
+pub fn class(target: &str) -> (&'static str, &str) {
+    ("class", target)
+}
+
+pub fn text<'a, C>(content: C) -> Element<'a>
+where
+    C: Into<Cow<'a, str>>,
+{
+    Element::Text(content.into())
+}
+
 type Attr<'a> = (&'static str, Cow<'a, str>);
 
 #[derive(PartialEq, Eq, Debug)]
@@ -37,8 +48,11 @@ impl<'a> Element<'a> {
                 children,
             } => {
                 let children_html: String = children.iter().map(|c| c.to_html()).collect();
-                let attrs_html: String =
-                    attrs.iter().map(|(k, v)| format!(r#"{k}="{v}""#)).collect();
+                let attrs_html: String = attrs
+                    .iter()
+                    .map(|(k, v)| format!(r#"{k}="{v}""#))
+                    .collect::<Vec<_>>()
+                    .join(" ");
                 format!("<{tag} {attrs_html}>{children_html}</{tag}>")
             }
             Element::Text(t) => t.to_string(),
@@ -52,11 +66,12 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let elem = a(
-            [href("https://www.rafa.ee")],
-            [Element::Text("My Site".into())],
-        );
-        let expected_html = r#"<a href="https://www.rafa.ee">My Site</a>"#;
-        assert_eq!(elem.to_html(), expected_html);
+        let actual_html = a(
+            [href("https://www.rafa.ee"), class("link")],
+            [text("My Site")],
+        )
+        .to_html();
+        let expected_html = r#"<a href="https://www.rafa.ee" class="link">My Site</a>"#;
+        assert_eq!(actual_html, expected_html);
     }
 }

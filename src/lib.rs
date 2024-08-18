@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-fn a<'a, const A: usize, S, C>(attrs: [(&'static str, S); A], children: C) -> Element<'a>
+pub fn a<'a, const A: usize, S, C>(attrs: [(&'static str, S); A], children: C) -> Element<'a>
 where
     S: Into<Cow<'a, str>>,
     C: Into<Vec<Element<'a>>>,
@@ -12,14 +12,14 @@ where
     }
 }
 
-fn href(target: &str) -> (&'static str, &str) {
+pub fn href(target: &str) -> (&'static str, &str) {
     ("href", target)
 }
 
 type Attr<'a> = (&'static str, Cow<'a, str>);
 
 #[derive(PartialEq, Eq, Debug)]
-enum Element<'a> {
+pub enum Element<'a> {
     Tag {
         tag: String,
         attrs: Vec<Attr<'a>>,
@@ -29,7 +29,7 @@ enum Element<'a> {
 }
 
 impl<'a> Element<'a> {
-    fn to_html(&'a self) -> String {
+    pub fn to_html(&'a self) -> String {
         match self {
             Element::Tag {
                 tag,

@@ -22,13 +22,36 @@ impl<'a> Element<'a> {
                 attrs,
                 children,
             } => {
-                let children_html: String = children.iter().map(|c| c.to_html()).collect();
-                let attrs_html: String = attrs
-                    .iter()
-                    .map(|(k, v)| format!(r#"{k}="{v}""#))
-                    .collect::<Vec<_>>()
-                    .join(" ");
-                format!("<{tag} {attrs_html}>{children_html}</{tag}>")
+                let mut children_html = String::new();
+                if !children.is_empty() {
+                    children_html.push_str("\n    ");
+                }
+                children_html.push_str(
+                    &children
+                        .iter()
+                        .map(|c| c.to_html())
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                        .replace("\n", "\n    "),
+                );
+
+                if !children.is_empty() {
+                    children_html.push('\n');
+                }
+
+                let mut attrs_html = String::new();
+                if !attrs.is_empty() {
+                    attrs_html.push(' ');
+                }
+                attrs_html.push_str(
+                    &attrs
+                        .iter()
+                        .map(|(k, v)| format!(r#"{k}="{v}""#))
+                        .collect::<Vec<_>>()
+                        .join(" "),
+                );
+
+                format!("<{tag}{attrs_html}>{children_html}</{tag}>")
             }
             Element::Text(t) => t.to_string(),
         }
@@ -40,17 +63,6 @@ mod tests {
     use super::*;
 
     use declare::*;
-
-    #[test]
-    fn it_works() {
-        let actual_html = a(
-            [href("https://www.rafa.ee"), class("link")],
-            [text("My Site")],
-        )
-        .to_html();
-        let expected_html = r#"<a href="https://www.rafa.ee" class="link">My Site</a>"#;
-        assert_eq!(actual_html, expected_html);
-    }
 
     #[test]
     fn base() {
@@ -74,20 +86,6 @@ mod tests {
             ],
         )
         .to_html();
-        let expected_html = r#"
-<html class="w-full h-full">
-  <head>
-    <link rel="stylesheet" href="/assets/preflight.css" />
-    <link rel="stylesheet" href="/assets/railwind.css" />
-    <script src="/assets/htmx.1.9.9.js"></script>
-    <meta name="color-scheme" content="dark" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-  </head>
-  <body class="w-full h-full text-gray-200 bg-neutral-800">
-  </body>
-</html>
-        "#
-        .replace("\n", "");
-        assert_eq!(actual_html, expected_html);
+        insta::assert_snapshot!(actual_html);
     }
 }

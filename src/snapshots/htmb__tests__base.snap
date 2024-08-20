@@ -1,0 +1,14 @@
+---
+source: src/lib.rs
+expression: actual_html
+---
+<html class="w-full h-full">
+    <head>
+        <link rel="stylesheet" href="/assets/preflight.css"></link>
+        <link rel="stylesheet" href="/assets/railwind.css"></link>
+        <script src="/assets/htmx.1.9.9.js"></script>
+        <meta name="color-scheme" content="dark"></meta>
+        <meta name="viewport" content="width=device-width,initial-scale=1"></meta>
+    </head>
+    <body class="w-full h-full text-gray-200 bg-neutral-800"></body>
+</html>

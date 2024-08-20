@@ -96,7 +96,7 @@ define_tag_function!(label);
 define_tag_function!(legend);
 define_tag_function!(li);
 define_tag_function!(link, leaf);
-define_tag_function!(main);
+define_tag_function!(main_);
 define_tag_function!(map);
 define_tag_function!(mark);
 define_tag_function!(math);

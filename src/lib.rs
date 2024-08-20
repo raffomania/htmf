@@ -51,4 +51,43 @@ mod tests {
         let expected_html = r#"<a href="https://www.rafa.ee" class="link">My Site</a>"#;
         assert_eq!(actual_html, expected_html);
     }
+
+    #[test]
+    fn base() {
+        let actual_html = html(
+            [class("w-full h-full")],
+            [
+                head(
+                    [],
+                    [
+                        link([rel("stylesheet"), href("/assets/preflight.css")]),
+                        link([rel("stylesheet"), href("/assets/railwind.css")]),
+                        script([src("/assets/htmx.1.9.9.js")], []),
+                        meta([name("color-scheme"), content("dark")]),
+                        meta([
+                            name("viewport"),
+                            content("width=device-width,initial-scale=1"),
+                        ]),
+                    ],
+                ),
+                body([class("w-full h-full text-gray-200 bg-neutral-800")], []),
+            ],
+        )
+        .to_html();
+        let expected_html = r#"
+<html class="w-full h-full">
+  <head>
+    <link rel="stylesheet" href="/assets/preflight.css" />
+    <link rel="stylesheet" href="/assets/railwind.css" />
+    <script src="/assets/htmx.1.9.9.js"></script>
+    <meta name="color-scheme" content="dark" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body class="w-full h-full text-gray-200 bg-neutral-800">
+  </body>
+</html>
+        "#
+        .replace("\n", "");
+        assert_eq!(actual_html, expected_html);
+    }
 }

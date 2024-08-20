@@ -7,7 +7,7 @@ type Attr<'a> = (&'static str, Cow<'a, str>);
 #[derive(PartialEq, Eq, Debug)]
 pub enum Element<'a> {
     Tag {
-        tag: String,
+        tag: &'static str,
         attrs: Vec<Attr<'a>>,
         children: Vec<Element<'a>>,
     },

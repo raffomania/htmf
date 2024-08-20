@@ -22,36 +22,30 @@ impl<'a> Element<'a> {
                 attrs,
                 children,
             } => {
-                let mut children_html = String::new();
-                if !children.is_empty() {
-                    children_html.push_str("\n    ");
-                }
+                let mut children_html = if !children.is_empty() { "\n" } else { "" }.to_string();
                 children_html.push_str(
                     &children
                         .iter()
                         .map(|c| c.to_html())
                         .collect::<Vec<_>>()
-                        .join("\n")
-                        .replace("\n", "\n    "),
+                        .join("\n"),
                 );
+
+                // Indent all children
+                children_html = children_html.replace("\n", "\n    ");
 
                 if !children.is_empty() {
                     children_html.push('\n');
                 }
 
-                let mut attrs_html = String::new();
-                if !attrs.is_empty() {
-                    attrs_html.push(' ');
-                }
-                attrs_html.push_str(
-                    &attrs
-                        .iter()
-                        .map(|(k, v)| format!(r#"{k}="{v}""#))
-                        .collect::<Vec<_>>()
-                        .join(" "),
-                );
+                let attrs_space = if !attrs.is_empty() { " " } else { "" };
+                let attrs_html: String = attrs
+                    .iter()
+                    .map(|(k, v)| format!(r#"{k}="{v}""#))
+                    .collect::<Vec<_>>()
+                    .join(" ");
 
-                format!("<{tag}{attrs_html}>{children_html}</{tag}>")
+                format!("<{tag}{attrs_space}{attrs_html}>{children_html}</{tag}>")
             }
             Element::Text(t) => t.to_string(),
         }

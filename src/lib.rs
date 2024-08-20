@@ -12,6 +12,9 @@ pub enum Element<'a> {
         children: Vec<Element<'a>>,
     },
     Text(Cow<'a, str>),
+    Document {
+        children: Vec<Element<'a>>,
+    },
 }
 
 impl<'a> Element<'a> {
@@ -48,6 +51,14 @@ impl<'a> Element<'a> {
                 format!("<{tag}{attrs_space}{attrs_html}>{children_html}</{tag}>")
             }
             Element::Text(t) => t.to_string(),
+            Element::Document { children } => {
+                let children_html = children
+                    .iter()
+                    .map(|c| c.to_html())
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                format!("<!doctype html>\n{children_html}")
+            }
         }
     }
 }
@@ -60,7 +71,7 @@ mod tests {
 
     #[test]
     fn base() {
-        let actual_html = html(
+        let actual_html = document([html(
             [class("w-full h-full")],
             [
                 head(
@@ -78,7 +89,7 @@ mod tests {
                 ),
                 body([class("w-full h-full text-gray-200 bg-neutral-800")], []),
             ],
-        )
+        )])
         .to_html();
         insta::assert_snapshot!(actual_html);
     }

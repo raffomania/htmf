@@ -28,6 +28,16 @@ macro_rules! define_tag_function {
     };
 }
 
+/// Prepend `<!doctype html>` to the given children.
+pub fn document<'a, C>(children: C) -> Element<'a>
+where
+    C: Into<Vec<Element<'a>>>,
+{
+    Element::Document {
+        children: children.into(),
+    }
+}
+
 define_tag_function!(a);
 define_tag_function!(abbr);
 define_tag_function!(address);

@@ -1,6 +1,6 @@
 # hypertext markup functions
 
-> **Warning**
+> [!WARNING]
 This is alpha-quality, completely insecure software.
 
 Functions for generating HTML from Rust in a declarative fashion:

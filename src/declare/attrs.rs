@@ -2,13 +2,15 @@ use std::borrow::Cow;
 
 use crate::Attr;
 
+// Take care to name the parameter `value`
+// to disable rust analyzer inlay hints
 macro_rules! define_attr_function {
     ($name:ident) => {
-        pub fn $name<'a, C>(content: C) -> Attr<'a>
+        pub fn $name<'a, C>(value: C) -> Attr<'a>
         where
             C: Into<Cow<'a, str>>,
         {
-            (stringify!($name), content.into())
+            (stringify!($name), value.into())
         }
     };
     ($name:ident, $value:literal) => {

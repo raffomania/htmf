@@ -17,6 +17,7 @@ a(
 
 - Fast compile times
 - Leverage Rust tooling for formatting, linting, syntax highlighting, ...
+- Strong compile-time guarantees
 - Easier to debug than custom template languages or macros
 - Function calls are visually similar to HTML's structure, making it familiar
 

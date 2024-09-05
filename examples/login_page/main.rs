@@ -81,6 +81,30 @@ fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
         )],
     );
 
+    let mut f = form()
+        .action("login")
+        .method("post")
+        .class("flex flex-col justify-center flex-1 max-w-md min-h-full px-4 mx-auto");
+
+    f.h1()
+        .class("text-2xl font-bold tracking-tight text-center")
+        .text("Sign in to your account");
+    f.label()
+        .class("mt-10 text-neutral-400")
+        .name("credentials[username]")
+        .text("Username");
+
+    f.button()
+        .type_("submit")
+        .class(
+            "leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center \
+                 justify-center disabled:bg-neutral-500 text-neutral-900",
+        )
+        .and(span().class("inline-block w-09 h-4").and(span().class(
+            "block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin \
+                     border-t-transparent htmx-indicator",
+        )));
+
     let form_fields = [
         h1(
             [class("text-2xl font-bold tracking-tight text-center")],
@@ -126,10 +150,7 @@ fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
                 class("flex flex-col justify-center flex-1 max-w-md min-h-full px-4 mx-auto"),
                 ("hx-boost", "true".into()),
             ],
-            form_fields
-                .into_iter()
-                .chain([submit_button])
-                .collect::<Vec<_>>(),
+            fragment(form_fields).append([submit_button]),
         )]
         .into(),
     )

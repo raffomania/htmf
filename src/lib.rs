@@ -101,4 +101,75 @@ mod tests {
         .to_html();
         insta::assert_snapshot!(actual_html);
     }
+
+    #[test]
+    fn base_new() {
+        // TODO how does this work with #[must_use]?
+        // Always doing h = h.foo() is annoying
+        let mut h = document().html().class("h-full w-full");
+        h.head().and([
+            link().rel("stylesheet").href("/assets/preflight.css"),
+            link().rel("stylesheet").href("/assets/railwind.css"),
+            script().src("/assets/htmx.1.9.9.js"),
+            meta().name("color-scheme").content("dark"),
+            meta()
+                .name("viewport")
+                .content("width=device-width,initial-scale=1"),
+        ]);
+        h.body().class("w-full h-full text-gray-200 bg-neutral-800");
+        let actual_html = h.to_html();
+
+        let actual_html = document()
+            .with([html().class("h-full w-full").with([
+                head().with([
+                    link().rel("stylesheet").href("/assets/preflight.css"),
+                    link().rel("stylesheet").href("/assets/railwind.css"),
+                    script().src("/assets/htmx.1.9.9.js"),
+                    meta().name("color-scheme").content("dark"),
+                    meta()
+                        .name("viewport")
+                        .content("width=device-width,initial-scale=1"),
+                ]),
+                body().class("w-full h-full text-gray-200 bg-neutral-800"),
+            ])])
+            .to_html();
+        let actual_html = document([html(
+            class("w-full h-full"),
+            [
+                head(
+                    [],
+                    [
+                        link(rel("stylesheet").href("/assets/preflight.css")),
+                        link(rel("stylesheet").href("/assets/railwind.css")),
+                        script(src("/assets/htmx.1.9.9.js"), []),
+                        meta(name("color-scheme").content("dark")),
+                        meta(name("viewport").content("width=device-width,initial-scale=1")),
+                    ],
+                ),
+                body(class("w-full h-full text-gray-200 bg-neutral-800"), []),
+            ],
+        )])
+        .to_html();
+        let actual_html = document([html(
+            [class("w-full h-full")],
+            [
+                head(
+                    [],
+                    [
+                        link([rel("stylesheet"), href("/assets/preflight.css")]),
+                        link([rel("stylesheet"), href("/assets/railwind.css")]),
+                        script([src("/assets/htmx.1.9.9.js")], []),
+                        meta([name("color-scheme"), content("dark")]),
+                        meta([
+                            name("viewport"),
+                            content("width=device-width,initial-scale=1"),
+                        ]),
+                    ],
+                ),
+                body([class("w-full h-full text-gray-200 bg-neutral-800")], []),
+            ],
+        )])
+        .to_html();
+        insta::assert_snapshot!(actual_html);
+    }
 }

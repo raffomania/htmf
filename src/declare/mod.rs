@@ -14,3 +14,12 @@ where
 {
     Element::Text(content.into())
 }
+
+pub fn fragment<'a, C>(value: C) -> Element<'a>
+where
+    C: Into<Vec<Element<'a>>>,
+{
+    Element::Fragment {
+        children: value.into(),
+    }
+}

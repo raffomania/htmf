@@ -11,6 +11,9 @@ pub enum Element<'a> {
         attrs: Vec<Attr<'a>>,
         children: Vec<Element<'a>>,
     },
+    Fragment {
+        children: Vec<Element<'a>>,
+    },
     Text(Cow<'a, str>),
     Document {
         children: Vec<Element<'a>>,
@@ -59,6 +62,11 @@ impl<'a> Element<'a> {
                     .join("\n");
                 format!("<!doctype html>\n{children_html}")
             }
+            Element::Fragment { children } => children
+                .iter()
+                .map(|c| c.to_html())
+                .collect::<Vec<_>>()
+                .join("\n"),
         }
     }
 }

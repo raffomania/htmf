@@ -15,13 +15,13 @@ macro_rules! define_tag_function {
         }
     };
     ($tag:ident, leaf) => {
-        pub fn $tag<'a, A>(attrs: A) -> Element<'a>
+        pub fn $tag<'a, A>(value: A) -> Element<'a>
         where
             A: Into<Vec<Attr<'a>>>,
         {
             Element::Tag {
                 tag: stringify!($tag),
-                attrs: attrs.into(),
+                attrs: value.into(),
                 children: Vec::new(),
             }
         }
@@ -29,12 +29,12 @@ macro_rules! define_tag_function {
 }
 
 /// Prepend `<!doctype html>` to the given children.
-pub fn document<'a, C>(children: C) -> Element<'a>
+pub fn document<'a, C>(value: C) -> Element<'a>
 where
     C: Into<Vec<Element<'a>>>,
 {
     Element::Document {
-        children: children.into(),
+        children: value.into(),
     }
 }
 

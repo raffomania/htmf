@@ -1,27 +1,20 @@
-use crate::{Attr, Element};
+use crate::Element;
 
 macro_rules! define_tag_function {
     ($tag:ident) => {
-        pub fn $tag<'a, A, C>(attrs: A, children: C) -> Element<'a>
-        where
-            A: Into<Vec<Attr<'a>>>,
-            C: Into<Vec<Element<'a>>>,
-        {
+        pub fn $tag<'a>() -> Element<'a> {
             Element::Tag {
                 tag: stringify!($tag),
-                attrs: attrs.into(),
-                children: children.into(),
+                attrs: Vec::new(),
+                children: Vec::new(),
             }
         }
     };
     ($tag:ident, leaf) => {
-        pub fn $tag<'a, A>(value: A) -> Element<'a>
-        where
-            A: Into<Vec<Attr<'a>>>,
-        {
+        pub fn $tag<'a>() -> Element<'a> {
             Element::Tag {
                 tag: stringify!($tag),
-                attrs: value.into(),
+                attrs: Vec::new(),
                 children: Vec::new(),
             }
         }
@@ -29,13 +22,151 @@ macro_rules! define_tag_function {
 }
 
 /// Prepend `<!doctype html>` to the given children.
-pub fn document<'a, C>(value: C) -> Element<'a>
-where
-    C: Into<Vec<Element<'a>>>,
-{
+pub fn document<'a>() -> Element<'a> {
     Element::Document {
-        children: value.into(),
+        children: Vec::new(),
     }
+}
+
+macro_rules! define_tag_method {
+    ($tag:ident) => {
+        pub fn $tag<'b>(&'b mut self) -> &'b mut Element<'a> {
+            self.children_mut().push($tag());
+            self.children_mut().last_mut().unwrap()
+        }
+    };
+    ($tag:ident, leaf) => {
+        pub fn $tag<'b>(&'b mut self) -> &'b mut Element<'a> {
+            self.children_mut().push($tag());
+            self.children_mut().last_mut().unwrap()
+        }
+    };
+}
+
+impl<'a> Element<'a> {
+    pub(crate) fn children_mut<'b>(&'b mut self) -> &'b mut Vec<Element<'a>> {
+        match self {
+            Element::Tag {
+                tag: _,
+                attrs: _,
+                ref mut children,
+            } => children,
+            Element::Fragment { ref mut children } => children,
+            Element::Text(_) => todo!(),
+            Element::Document { ref mut children } => children,
+        }
+    }
+
+    define_tag_method!(a);
+    define_tag_method!(abbr);
+    define_tag_method!(address);
+    define_tag_method!(area, leaf);
+    define_tag_method!(article);
+    define_tag_method!(aside);
+    define_tag_method!(audio);
+    define_tag_method!(b);
+    define_tag_method!(base, leaf);
+    define_tag_method!(bdi);
+    define_tag_method!(bdo);
+    define_tag_method!(body);
+    define_tag_method!(blockquote);
+    define_tag_method!(br, leaf);
+    define_tag_method!(button);
+    define_tag_method!(canvas);
+    define_tag_method!(caption);
+    define_tag_method!(cite);
+    define_tag_method!(code);
+    define_tag_method!(col);
+    define_tag_method!(colgroup);
+    define_tag_method!(data);
+    define_tag_method!(datalist);
+    define_tag_method!(dd);
+    define_tag_method!(del);
+    define_tag_method!(details);
+    define_tag_method!(dfn);
+    define_tag_method!(dialog);
+    define_tag_method!(div);
+    define_tag_method!(dl);
+    define_tag_method!(dt);
+    define_tag_method!(em);
+    define_tag_method!(embed);
+    define_tag_method!(fieldset);
+    define_tag_method!(figcaption);
+    define_tag_method!(figure);
+    define_tag_method!(footer);
+    define_tag_method!(form);
+    define_tag_method!(h1);
+    define_tag_method!(h2);
+    define_tag_method!(h3);
+    define_tag_method!(h4);
+    define_tag_method!(h5);
+    define_tag_method!(h6);
+    define_tag_method!(header);
+    define_tag_method!(head);
+    define_tag_method!(hr, leaf);
+    define_tag_method!(html);
+    define_tag_method!(i);
+    define_tag_method!(iframe);
+    define_tag_method!(img, leaf);
+    define_tag_method!(input, leaf);
+    define_tag_method!(ins);
+    define_tag_method!(kbd);
+    define_tag_method!(label);
+    define_tag_method!(legend);
+    define_tag_method!(li);
+    define_tag_method!(link, leaf);
+    define_tag_method!(main_);
+    define_tag_method!(map);
+    define_tag_method!(mark);
+    define_tag_method!(math);
+    define_tag_method!(menu);
+    define_tag_method!(menuitem);
+    define_tag_method!(meta, leaf);
+    define_tag_method!(meter);
+    define_tag_method!(nav);
+    define_tag_method!(noscript);
+    define_tag_method!(object);
+    define_tag_method!(ol);
+    define_tag_method!(optgroup);
+    define_tag_method!(option);
+    define_tag_method!(output);
+    define_tag_method!(p);
+    define_tag_method!(param);
+    define_tag_method!(picture);
+    define_tag_method!(pre);
+    define_tag_method!(progress);
+    define_tag_method!(q);
+    define_tag_method!(rp);
+    define_tag_method!(rt);
+    define_tag_method!(ruby);
+    define_tag_method!(s);
+    define_tag_method!(samp);
+    define_tag_method!(script);
+    define_tag_method!(section);
+    define_tag_method!(select);
+    define_tag_method!(small);
+    define_tag_method!(source, leaf);
+    define_tag_method!(span);
+    define_tag_method!(strong);
+    define_tag_method!(sub);
+    define_tag_method!(summary);
+    define_tag_method!(sup);
+    define_tag_method!(svg);
+    define_tag_method!(table);
+    define_tag_method!(tbody);
+    define_tag_method!(td);
+    define_tag_method!(textarea);
+    define_tag_method!(tfoot);
+    define_tag_method!(th);
+    define_tag_method!(thead);
+    define_tag_method!(time);
+    define_tag_method!(tr);
+    define_tag_method!(track, leaf);
+    define_tag_method!(u);
+    define_tag_method!(ul);
+    define_tag_method!(var);
+    define_tag_method!(video);
+    define_tag_method!(wbr);
 }
 
 define_tag_function!(a);

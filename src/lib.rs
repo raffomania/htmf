@@ -21,6 +21,15 @@ pub enum Element<'a> {
 }
 
 impl<'a> Element<'a> {
+    pub fn with<C>(mut self, children: C) -> Element<'a>
+    where
+        C: Into<Vec<Element<'a>>>,
+    {
+        let mut children = children.into();
+        self.children_mut().append(&mut children);
+        self
+    }
+
     pub fn to_html(&'a self) -> String {
         match self {
             Element::Tag {
@@ -77,28 +86,39 @@ mod tests {
 
     use declare::*;
 
+    use pretty_assertions::assert_eq;
+
     #[test]
     fn base() {
-        let actual_html = document([html(
-            [class("w-full h-full")],
-            [
-                head(
-                    [],
-                    [
-                        link([rel("stylesheet"), href("/assets/preflight.css")]),
-                        link([rel("stylesheet"), href("/assets/railwind.css")]),
-                        script([src("/assets/htmx.1.9.9.js")], []),
-                        meta([name("color-scheme"), content("dark")]),
-                        meta([
-                            name("viewport"),
-                            content("width=device-width,initial-scale=1"),
-                        ]),
-                    ],
-                ),
-                body([class("w-full h-full text-gray-200 bg-neutral-800")], []),
-            ],
-        )])
-        .to_html();
-        insta::assert_snapshot!(actual_html);
+        let doc_immutable = document().with([html().class("w-full h-full").with([
+            head().with([
+                link().rel("stylesheet").href("/assets/preflight.css"),
+                link().rel("stylesheet").href("/assets/railwind.css"),
+                script().src("/assets/htmx.1.9.9.js"),
+                meta().name("color-scheme").content("dark"),
+                meta()
+                    .name("viewport")
+                    .content("width=device-width,initial-scale=1"),
+            ]),
+            body().class("w-full h-full text-gray-200 bg-neutral-800"),
+        ])]);
+        let html = doc_immutable.to_html();
+        insta::assert_snapshot!(html);
+
+        let mut doc_mutable = document();
+        let mut h = doc_mutable.html().class("w-full h-full");
+        h.head().with([
+            link().rel("stylesheet").href("/assets/preflight.css"),
+            link().rel("stylesheet").href("/assets/railwind.css"),
+            script().src("/assets/htmx.1.9.9.js"),
+            meta().name("color-scheme").content("dark"),
+            meta()
+                .name("viewport")
+                .content("width=device-width,initial-scale=1"),
+        ]);
+        h.body().class("w-full h-full text-gray-200 bg-neutral-800");
+        assert_eq!(doc_immutable, doc_mutable);
+        let html_mutable = doc_mutable.to_html();
+        assert_eq!(html, html_mutable)
     }
 }

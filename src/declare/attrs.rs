@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use crate::Attr;
+use crate::{Attr, Element};
 
 // Take care to name the parameter `value`
 // to disable rust analyzer inlay hints
@@ -18,6 +18,108 @@ macro_rules! define_attr_function {
             (stringify!($name), $value.into())
         }
     };
+}
+
+macro_rules! define_attr_method {
+    ($name:ident) => {
+        pub fn $name<C>(mut self, value: C) -> Element<'a>
+        where
+            C: Into<Cow<'a, str>>,
+        {
+            self.attrs_mut().push($name(value));
+            self
+        }
+    };
+    ($name:ident, $value:literal) => {
+        pub fn $name<C>(mut self) -> Element<'a> {
+            self.attrs_mut().push($name());
+            self
+        }
+    };
+}
+
+impl<'a> Element<'a> {
+    fn attrs_mut<'b>(&'b mut self) -> &'b mut Vec<Attr<'a>> {
+        match self {
+            Element::Tag {
+                tag: _,
+                ref mut attrs,
+                children: _,
+            } => attrs,
+            Element::Fragment { children: _ } => todo!(),
+            Element::Text(_) => todo!(),
+            Element::Document { children: _ } => todo!(),
+        }
+    }
+
+    pub fn attr<C>(mut self, name: &'static str, value: C) -> Element<'a>
+    where
+        C: Into<Cow<'a, str>>,
+    {
+        self.attrs_mut().push((name, value.into()));
+        self
+    }
+
+    define_attr_method!(accept);
+    define_attr_method!(accept_charset);
+    define_attr_method!(action);
+    define_attr_method!(alt);
+    define_attr_method!(aria_checked);
+    define_attr_method!(aria_current);
+    define_attr_method!(aria_disabled, "true");
+    define_attr_method!(aria_hidden, "true");
+    define_attr_method!(aria_invalid, "true");
+    define_attr_method!(aria_label);
+    define_attr_method!(aria_labelledby);
+    define_attr_method!(aria_placeholder);
+    define_attr_method!(aria_readonly);
+    define_attr_method!(aria_required);
+    define_attr_method!(async_, "true");
+    define_attr_method!(autocapitalize);
+    define_attr_method!(autocomplete);
+    define_attr_method!(autofocus, "true");
+    define_attr_method!(autoplay, "true");
+    define_attr_method!(capture);
+    define_attr_method!(charset);
+    define_attr_method!(checked, "true");
+    define_attr_method!(cite_attr);
+    define_attr_method!(class);
+    define_attr_method!(content);
+    define_attr_method!(contenteditable, "true");
+    define_attr_method!(crossorigin);
+    define_attr_method!(defer, "true");
+    define_attr_method!(disabled, "true");
+    define_attr_method!(draggable, "true");
+    define_attr_method!(enctype);
+    define_attr_method!(for_);
+    define_attr_method!(formaction);
+    define_attr_method!(height);
+    define_attr_method!(href);
+    define_attr_method!(http_equiv);
+    define_attr_method!(id);
+    define_attr_method!(integrity);
+    define_attr_method!(lang);
+    define_attr_method!(loop_, "true");
+    define_attr_method!(maxlength);
+    define_attr_method!(method);
+    define_attr_method!(minlength);
+    define_attr_method!(name);
+    define_attr_method!(placeholder);
+    define_attr_method!(preload, "true");
+    define_attr_method!(property);
+    define_attr_method!(readonly, "true");
+    define_attr_method!(rel);
+    define_attr_method!(required);
+    define_attr_method!(role);
+    define_attr_method!(selected, "true");
+    define_attr_method!(src);
+    define_attr_method!(style);
+    define_attr_method!(tabindex);
+    define_attr_method!(target);
+    define_attr_method!(title);
+    define_attr_method!(type_);
+    define_attr_method!(value);
+    define_attr_method!(width);
 }
 
 define_attr_function!(accept);

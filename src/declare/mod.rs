@@ -1,25 +1,48 @@
-mod attrs;
-mod tags;
+mod all_attrs;
+mod all_tags;
 
 use std::borrow::Cow;
 
-pub use attrs::*;
-pub use tags::*;
+pub use crate::element::Element;
+pub use all_attrs::*;
+pub use all_tags::*;
 
-use crate::Element;
+use crate::element::{Path, PureElement};
 
-pub fn text<'a, C>(value: C) -> Element<'a>
+pub fn text<'e, C>(value: C) -> Element<'e>
 where
-    C: Into<Cow<'a, str>>,
+    C: Into<Cow<'e, str>>,
 {
-    Element::Text(value.into())
+    Element {
+        element: PureElement::Text { text: value.into() },
+        parent: Path::Top,
+    }
 }
 
-pub fn fragment<'a, C>(value: C) -> Element<'a>
-where
-    C: Into<Vec<Element<'a>>>,
-{
-    Element::Fragment {
-        children: value.into(),
+impl<'e> Element<'e> {
+    pub fn text<C>(self, value: C) -> Element<'e>
+    where
+        C: Into<Cow<'e, str>>,
+    {
+        self.into_new_child_element(PureElement::Text { text: value.into() })
+    }
+}
+
+pub fn fragment<'e>() -> Element<'e> {
+    Element {
+        element: PureElement::Fragment {
+            children: Vec::new(),
+        },
+        parent: Path::Top,
+    }
+}
+
+/// Prepend `<!doctype html>` to the given children.
+pub fn document<'e>() -> Element<'e> {
+    Element {
+        element: PureElement::Document {
+            children: Vec::new(),
+        },
+        parent: Path::Top,
     }
 }

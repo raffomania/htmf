@@ -1,8 +1,9 @@
 ---
 source: src/lib.rs
-expression: actual_html
+expression: html_immutable
 ---
 <!doctype html>
+
 <html class="w-full h-full">
     <head>
         <link rel="stylesheet" href="/assets/preflight.css"></link>

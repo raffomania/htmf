@@ -1,5 +1,5 @@
 use garde::{self, Validate};
-use htmf::{declare::*, Element};
+use htmf::{declare::*, element::Element};
 
 #[derive(Debug)]
 pub struct FormErrors(pub garde::Report);
@@ -28,7 +28,7 @@ pub struct Credentials {
 }
 
 fn base(children: Vec<Element>) -> Element {
-    document().with([html().class("w-full h-full").with([
+    html().class("w-full h-full").with([
         head().with([
             link().rel("stylesheet").href("/assets/preflight.css"),
             link().rel("stylesheet").href("/assets/railwind.css"),
@@ -41,27 +41,28 @@ fn base(children: Vec<Element>) -> Element {
         body()
             .class("w-full h-full text-gray-200 bg-neutral-800")
             .with(children),
-    ])])
+    ])
 }
 
 fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
     let errors_fragment = |errors: &FormErrors, path| {
-        let mut children = Vec::new();
+        let mut fragment = fragment();
         for message in errors.filter(path) {
-            children.push(p().class("text-red-700").with([text(message)]))
+            fragment = fragment.with([p().class("text-red-700").text(message)]);
         }
-        fragment(children)
+
+        fragment
     };
 
     let submit_button = button()
         .type_("submit")
         .class(
             "leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center \
-                 justify-center disabled:bg-neutral-500 text-neutral-900",
+             justify-center disabled:bg-neutral-500 text-neutral-900",
         )
         .with([span().class("inline-block w-09 h-4").with([span().class(
             "block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin \
-                     border-t-transparent htmx-indicator",
+             border-t-transparent htmx-indicator",
         )])]);
 
     let form_fields = [

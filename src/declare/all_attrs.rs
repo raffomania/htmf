@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 
-use crate::{Attr, Element};
+use crate::attr::Attr;
+use crate::element::Element;
 
 // Take care to name the parameter `value`
 // to disable rust analyzer inlay hints
@@ -26,40 +27,23 @@ macro_rules! define_attr_method {
         where
             C: Into<Cow<'a, str>>,
         {
-            self.attrs_mut().push($name(value));
+            if let Some(attrs) = self.element.attrs_mut() {
+                attrs.push($name(value));
+            }
             self
         }
     };
     ($name:ident, $value:literal) => {
         pub fn $name<C>(mut self) -> Element<'a> {
-            self.attrs_mut().push($name());
+            if let Some(attrs) = self.element.attrs_mut() {
+                attrs.push($name());
+            }
             self
         }
     };
 }
 
 impl<'a> Element<'a> {
-    fn attrs_mut<'b>(&'b mut self) -> &'b mut Vec<Attr<'a>> {
-        match self {
-            Element::Tag {
-                tag: _,
-                ref mut attrs,
-                children: _,
-            } => attrs,
-            Element::Fragment { children: _ } => todo!(),
-            Element::Text(_) => todo!(),
-            Element::Document { children: _ } => todo!(),
-        }
-    }
-
-    pub fn attr<C>(mut self, name: &'static str, value: C) -> Element<'a>
-    where
-        C: Into<Cow<'a, str>>,
-    {
-        self.attrs_mut().push((name, value.into()));
-        self
-    }
-
     define_attr_method!(accept);
     define_attr_method!(accept_charset);
     define_attr_method!(action);

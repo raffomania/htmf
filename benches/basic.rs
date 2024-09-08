@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use htmf::declare as d;
+use htmf::declare::*;
 
 fn run(c: &mut Criterion) {
     let mut group = c.benchmark_group("run");
@@ -9,7 +9,26 @@ fn run(c: &mut Criterion) {
     group.warm_up_time(Duration::from_secs(1));
     group.bench_function("run", |b| {
         b.iter(|| {
-            d::a([d::href("https://www.rafa.ee")], [d::text("My Site")]).to_html();
+            document([html(
+                [class("w-full h-full")],
+                [
+                    head(
+                        [],
+                        [
+                            link([rel("stylesheet"), href("/assets/preflight.css")]),
+                            link([rel("stylesheet"), href("/assets/railwind.css")]),
+                            script([src("/assets/htmx.1.9.9.js")], []),
+                            meta([name("color-scheme"), content("dark")]),
+                            meta([
+                                name("viewport"),
+                                content("width=device-width,initial-scale=1"),
+                            ]),
+                        ],
+                    ),
+                    body([class("w-full h-full text-gray-200 bg-neutral-800")], []),
+                ],
+            )])
+            .to_html();
         });
     });
     group.finish();

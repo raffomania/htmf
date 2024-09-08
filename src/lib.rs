@@ -1,5 +1,7 @@
 use std::borrow::Cow;
 
+use declare::Builder;
+
 pub mod declare;
 
 type Attr<'a> = (&'static str, Cow<'a, str>);
@@ -28,6 +30,23 @@ impl<'a> Element<'a> {
         let mut children = children.into();
         self.children_mut().append(&mut children);
         self
+    }
+
+    pub(crate) fn children_mut<'temp>(&'temp mut self) -> &'temp mut Vec<Element<'a>> {
+        match self {
+            Element::Tag {
+                tag: _,
+                attrs: _,
+                ref mut children,
+            } => children,
+            Element::Fragment { ref mut children } => children,
+            Element::Text(_) => todo!(),
+            Element::Document { ref mut children } => children,
+        }
+    }
+
+    pub fn nest<'borrowed>(&'borrowed mut self) -> Builder<'borrowed, 'a> {
+        Builder { element: self }
     }
 
     pub fn to_html(&'a self) -> String {
@@ -102,23 +121,26 @@ mod tests {
             ]),
             body().class("w-full h-full text-gray-200 bg-neutral-800"),
         ])]);
-        let html = doc_immutable.to_html();
-        insta::assert_snapshot!(html);
+        let html_immutable = doc_immutable.to_html();
+        insta::assert_snapshot!(html_immutable);
 
-        // let mut doc_mutable = document();
-        // let h = doc_mutable.html().class("w-full h-full");
-        // h.head().with([
-        //     link().rel("stylesheet").href("/assets/preflight.css"),
-        //     link().rel("stylesheet").href("/assets/railwind.css"),
-        //     script().src("/assets/htmx.1.9.9.js"),
-        //     meta().name("color-scheme").content("dark"),
-        //     meta()
-        //         .name("viewport")
-        //         .content("width=device-width,initial-scale=1"),
-        // ]);
-        // h.body().class("w-full h-full text-gray-200 bg-neutral-800");
-        // assert_eq!(doc_immutable, doc_mutable);
-        // let html_mutable = doc_mutable.to_html();
-        // assert_eq!(html, html_mutable)
+        let mut doc_mut = document();
+        let mut h = html().class("w-full h-full");
+        h.nest().head().add_children([
+            link().rel("stylesheet").href("/assets/preflight.css"),
+            link().rel("stylesheet").href("/assets/railwind.css"),
+            script().src("/assets/htmx.1.9.9.js"),
+            meta().name("color-scheme").content("dark"),
+            meta()
+                .name("viewport")
+                .content("width=device-width,initial-scale=1"),
+        ]);
+        h.nest()
+            .body()
+            .class("w-full h-full text-gray-200 bg-neutral-800");
+        doc_mut = doc_mut.with([h]);
+        assert_eq!(doc_immutable, doc_mut);
+        let html_mutable = doc_mut.to_html();
+        assert_eq!(html_immutable, html_mutable)
     }
 }

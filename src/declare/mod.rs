@@ -1,9 +1,11 @@
 mod attrs;
+mod builder;
 mod tags;
 
 use std::borrow::Cow;
 
 pub use attrs::*;
+pub use builder::*;
 pub use tags::*;
 
 use crate::Element;

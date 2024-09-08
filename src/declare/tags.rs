@@ -1,3 +1,4 @@
+use crate::declare::Builder;
 use crate::Element;
 
 macro_rules! define_tag_function {
@@ -29,139 +30,127 @@ pub fn document<'a>() -> Element<'a> {
     }
 }
 
-macro_rules! define_tag_method {
+macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag<'b>(&'b mut self) -> &'b mut Element<'a> {
-            self.children_mut().push($tag());
-            self.children_mut().last_mut().unwrap()
+        pub fn $tag(mut self) -> Builder<'borrowed, 'element> {
+            self.element.children_mut().push($tag());
+            self.element = self.element.children_mut().last_mut().unwrap();
+            self
         }
     };
 }
 
-impl<'a> Element<'a> {
-    pub(crate) fn children_mut<'b>(&'b mut self) -> &'b mut Vec<Element<'a>> {
-        match self {
-            Element::Tag {
-                tag: _,
-                attrs: _,
-                ref mut children,
-            } => children,
-            Element::Fragment { ref mut children } => children,
-            Element::Text(_) => todo!(),
-            Element::Document { ref mut children } => children,
-        }
-    }
-
-    define_tag_method!(a);
-    define_tag_method!(abbr);
-    define_tag_method!(address);
-    define_tag_method!(area, leaf);
-    define_tag_method!(article);
-    define_tag_method!(aside);
-    define_tag_method!(audio);
-    define_tag_method!(b);
-    define_tag_method!(base, leaf);
-    define_tag_method!(bdi);
-    define_tag_method!(bdo);
-    define_tag_method!(body);
-    define_tag_method!(blockquote);
-    define_tag_method!(br, leaf);
-    define_tag_method!(button);
-    define_tag_method!(canvas);
-    define_tag_method!(caption);
-    define_tag_method!(cite);
-    define_tag_method!(code);
-    define_tag_method!(col);
-    define_tag_method!(colgroup);
-    define_tag_method!(data);
-    define_tag_method!(datalist);
-    define_tag_method!(dd);
-    define_tag_method!(del);
-    define_tag_method!(details);
-    define_tag_method!(dfn);
-    define_tag_method!(dialog);
-    define_tag_method!(div);
-    define_tag_method!(dl);
-    define_tag_method!(dt);
-    define_tag_method!(em);
-    define_tag_method!(embed);
-    define_tag_method!(fieldset);
-    define_tag_method!(figcaption);
-    define_tag_method!(figure);
-    define_tag_method!(footer);
-    define_tag_method!(form);
-    define_tag_method!(h1);
-    define_tag_method!(h2);
-    define_tag_method!(h3);
-    define_tag_method!(h4);
-    define_tag_method!(h5);
-    define_tag_method!(h6);
-    define_tag_method!(header);
-    define_tag_method!(head);
-    define_tag_method!(hr, leaf);
-    define_tag_method!(html);
-    define_tag_method!(i);
-    define_tag_method!(iframe);
-    define_tag_method!(img, leaf);
-    define_tag_method!(input, leaf);
-    define_tag_method!(ins);
-    define_tag_method!(kbd);
-    define_tag_method!(label);
-    define_tag_method!(legend);
-    define_tag_method!(li);
-    define_tag_method!(link, leaf);
-    define_tag_method!(main_);
-    define_tag_method!(map);
-    define_tag_method!(mark);
-    define_tag_method!(math);
-    define_tag_method!(menu);
-    define_tag_method!(menuitem);
-    define_tag_method!(meta, leaf);
-    define_tag_method!(meter);
-    define_tag_method!(nav);
-    define_tag_method!(noscript);
-    define_tag_method!(object);
-    define_tag_method!(ol);
-    define_tag_method!(optgroup);
-    define_tag_method!(option);
-    define_tag_method!(output);
-    define_tag_method!(p);
-    define_tag_method!(param);
-    define_tag_method!(picture);
-    define_tag_method!(pre);
-    define_tag_method!(progress);
-    define_tag_method!(q);
-    define_tag_method!(rp);
-    define_tag_method!(rt);
-    define_tag_method!(ruby);
-    define_tag_method!(s);
-    define_tag_method!(samp);
-    define_tag_method!(script);
-    define_tag_method!(section);
-    define_tag_method!(select);
-    define_tag_method!(small);
-    define_tag_method!(source, leaf);
-    define_tag_method!(span);
-    define_tag_method!(strong);
-    define_tag_method!(sub);
-    define_tag_method!(summary);
-    define_tag_method!(sup);
-    define_tag_method!(svg);
-    define_tag_method!(table);
-    define_tag_method!(tbody);
-    define_tag_method!(td);
-    define_tag_method!(textarea);
-    define_tag_method!(tfoot);
-    define_tag_method!(th);
-    define_tag_method!(thead);
-    define_tag_method!(time);
-    define_tag_method!(tr);
-    define_tag_method!(track, leaf);
-    define_tag_method!(u);
-    define_tag_method!(ul);
-    define_tag_method!(var);
-    define_tag_method!(video);
-    define_tag_method!(wbr);
+impl<'borrowed, 'element> Builder<'borrowed, 'element> {
+    define_tag_builder_method!(a);
+    define_tag_builder_method!(abbr);
+    define_tag_builder_method!(address);
+    define_tag_builder_method!(area, leaf);
+    define_tag_builder_method!(article);
+    define_tag_builder_method!(aside);
+    define_tag_builder_method!(audio);
+    define_tag_builder_method!(b);
+    define_tag_builder_method!(base, leaf);
+    define_tag_builder_method!(bdi);
+    define_tag_builder_method!(bdo);
+    define_tag_builder_method!(body);
+    define_tag_builder_method!(blockquote);
+    define_tag_builder_method!(br, leaf);
+    define_tag_builder_method!(button);
+    define_tag_builder_method!(canvas);
+    define_tag_builder_method!(caption);
+    define_tag_builder_method!(cite);
+    define_tag_builder_method!(code);
+    define_tag_builder_method!(col);
+    define_tag_builder_method!(colgroup);
+    define_tag_builder_method!(data);
+    define_tag_builder_method!(datalist);
+    define_tag_builder_method!(dd);
+    define_tag_builder_method!(del);
+    define_tag_builder_method!(details);
+    define_tag_builder_method!(dfn);
+    define_tag_builder_method!(dialog);
+    define_tag_builder_method!(div);
+    define_tag_builder_method!(dl);
+    define_tag_builder_method!(dt);
+    define_tag_builder_method!(em);
+    define_tag_builder_method!(embed);
+    define_tag_builder_method!(fieldset);
+    define_tag_builder_method!(figcaption);
+    define_tag_builder_method!(figure);
+    define_tag_builder_method!(footer);
+    define_tag_builder_method!(form);
+    define_tag_builder_method!(h1);
+    define_tag_builder_method!(h2);
+    define_tag_builder_method!(h3);
+    define_tag_builder_method!(h4);
+    define_tag_builder_method!(h5);
+    define_tag_builder_method!(h6);
+    define_tag_builder_method!(header);
+    define_tag_builder_method!(head);
+    define_tag_builder_method!(hr, leaf);
+    define_tag_builder_method!(html);
+    define_tag_builder_method!(i);
+    define_tag_builder_method!(iframe);
+    define_tag_builder_method!(img, leaf);
+    define_tag_builder_method!(input, leaf);
+    define_tag_builder_method!(ins);
+    define_tag_builder_method!(kbd);
+    define_tag_builder_method!(label);
+    define_tag_builder_method!(legend);
+    define_tag_builder_method!(li);
+    define_tag_builder_method!(link, leaf);
+    define_tag_builder_method!(main_);
+    define_tag_builder_method!(map);
+    define_tag_builder_method!(mark);
+    define_tag_builder_method!(math);
+    define_tag_builder_method!(menu);
+    define_tag_builder_method!(menuitem);
+    define_tag_builder_method!(meta, leaf);
+    define_tag_builder_method!(meter);
+    define_tag_builder_method!(nav);
+    define_tag_builder_method!(noscript);
+    define_tag_builder_method!(object);
+    define_tag_builder_method!(ol);
+    define_tag_builder_method!(optgroup);
+    define_tag_builder_method!(option);
+    define_tag_builder_method!(output);
+    define_tag_builder_method!(p);
+    define_tag_builder_method!(param);
+    define_tag_builder_method!(picture);
+    define_tag_builder_method!(pre);
+    define_tag_builder_method!(progress);
+    define_tag_builder_method!(q);
+    define_tag_builder_method!(rp);
+    define_tag_builder_method!(rt);
+    define_tag_builder_method!(ruby);
+    define_tag_builder_method!(s);
+    define_tag_builder_method!(samp);
+    define_tag_builder_method!(script);
+    define_tag_builder_method!(section);
+    define_tag_builder_method!(select);
+    define_tag_builder_method!(small);
+    define_tag_builder_method!(source, leaf);
+    define_tag_builder_method!(span);
+    define_tag_builder_method!(strong);
+    define_tag_builder_method!(sub);
+    define_tag_builder_method!(summary);
+    define_tag_builder_method!(sup);
+    define_tag_builder_method!(svg);
+    define_tag_builder_method!(table);
+    define_tag_builder_method!(tbody);
+    define_tag_builder_method!(td);
+    define_tag_builder_method!(textarea);
+    define_tag_builder_method!(tfoot);
+    define_tag_builder_method!(th);
+    define_tag_builder_method!(thead);
+    define_tag_builder_method!(time);
+    define_tag_builder_method!(tr);
+    define_tag_builder_method!(track, leaf);
+    define_tag_builder_method!(u);
+    define_tag_builder_method!(ul);
+    define_tag_builder_method!(var);
+    define_tag_builder_method!(video);
+    define_tag_builder_method!(wbr);
 }
 
 define_tag_function!(a);

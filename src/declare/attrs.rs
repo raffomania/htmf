@@ -2,6 +2,8 @@ use std::borrow::Cow;
 
 use crate::{Attr, Element};
 
+use super::Builder;
+
 // Take care to name the parameter `value`
 // to disable rust analyzer inlay hints
 macro_rules! define_attr_function {
@@ -33,6 +35,24 @@ macro_rules! define_attr_method {
     ($name:ident, $value:literal) => {
         pub fn $name<C>(mut self) -> Element<'a> {
             self.attrs_mut().push($name());
+            self
+        }
+    };
+}
+
+macro_rules! define_attr_builder_method {
+    ($name:ident) => {
+        pub fn $name<'temp: 'borrowed, C>(self, value: C) -> Builder<'borrowed, 'element>
+        where
+            C: Into<Cow<'element, str>>,
+        {
+            self.element.attrs_mut().push($name(value));
+            self
+        }
+    };
+    ($name:ident, $value:literal) => {
+        pub fn $name<C>(self) -> Builder<'borrowed, 'element> {
+            self.element.attrs_mut().push($name());
             self
         }
     };
@@ -120,6 +140,77 @@ impl<'a> Element<'a> {
     define_attr_method!(type_);
     define_attr_method!(value);
     define_attr_method!(width);
+}
+
+impl<'borrowed, 'element> Builder<'borrowed, 'element> {
+    pub fn attr<C>(self, name: &'static str, value: C) -> Self
+    where
+        C: Into<Cow<'element, str>>,
+    {
+        self.element.attrs_mut().push((name, value.into()));
+        self
+    }
+
+    define_attr_builder_method!(accept);
+    define_attr_builder_method!(accept_charset);
+    define_attr_builder_method!(action);
+    define_attr_builder_method!(alt);
+    define_attr_builder_method!(aria_checked);
+    define_attr_builder_method!(aria_current);
+    define_attr_builder_method!(aria_disabled, "true");
+    define_attr_builder_method!(aria_hidden, "true");
+    define_attr_builder_method!(aria_invalid, "true");
+    define_attr_builder_method!(aria_label);
+    define_attr_builder_method!(aria_labelledby);
+    define_attr_builder_method!(aria_placeholder);
+    define_attr_builder_method!(aria_readonly);
+    define_attr_builder_method!(aria_required);
+    define_attr_builder_method!(async_, "true");
+    define_attr_builder_method!(autocapitalize);
+    define_attr_builder_method!(autocomplete);
+    define_attr_builder_method!(autofocus, "true");
+    define_attr_builder_method!(autoplay, "true");
+    define_attr_builder_method!(capture);
+    define_attr_builder_method!(charset);
+    define_attr_builder_method!(checked, "true");
+    define_attr_builder_method!(cite_attr);
+    define_attr_builder_method!(class);
+    define_attr_builder_method!(content);
+    define_attr_builder_method!(contenteditable, "true");
+    define_attr_builder_method!(crossorigin);
+    define_attr_builder_method!(defer, "true");
+    define_attr_builder_method!(disabled, "true");
+    define_attr_builder_method!(draggable, "true");
+    define_attr_builder_method!(enctype);
+    define_attr_builder_method!(for_);
+    define_attr_builder_method!(formaction);
+    define_attr_builder_method!(height);
+    define_attr_builder_method!(href);
+    define_attr_builder_method!(http_equiv);
+    define_attr_builder_method!(id);
+    define_attr_builder_method!(integrity);
+    define_attr_builder_method!(lang);
+    define_attr_builder_method!(loop_, "true");
+    define_attr_builder_method!(maxlength);
+    define_attr_builder_method!(method);
+    define_attr_builder_method!(minlength);
+    define_attr_builder_method!(name);
+    define_attr_builder_method!(placeholder);
+    define_attr_builder_method!(preload, "true");
+    define_attr_builder_method!(property);
+    define_attr_builder_method!(readonly, "true");
+    define_attr_builder_method!(rel);
+    define_attr_builder_method!(required);
+    define_attr_builder_method!(role);
+    define_attr_builder_method!(selected, "true");
+    define_attr_builder_method!(src);
+    define_attr_builder_method!(style);
+    define_attr_builder_method!(tabindex);
+    define_attr_builder_method!(target);
+    define_attr_builder_method!(title);
+    define_attr_builder_method!(type_);
+    define_attr_builder_method!(value);
+    define_attr_builder_method!(width);
 }
 
 define_attr_function!(accept);

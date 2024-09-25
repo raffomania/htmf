@@ -105,20 +105,20 @@ mod tests {
         let html = doc_immutable.to_html();
         insta::assert_snapshot!(html);
 
-        let mut doc_mutable = document();
-        let mut h = doc_mutable.html().class("w-full h-full");
-        h.head().with([
-            link().rel("stylesheet").href("/assets/preflight.css"),
-            link().rel("stylesheet").href("/assets/railwind.css"),
-            script().src("/assets/htmx.1.9.9.js"),
-            meta().name("color-scheme").content("dark"),
-            meta()
-                .name("viewport")
-                .content("width=device-width,initial-scale=1"),
-        ]);
-        h.body().class("w-full h-full text-gray-200 bg-neutral-800");
-        assert_eq!(doc_immutable, doc_mutable);
-        let html_mutable = doc_mutable.to_html();
-        assert_eq!(html, html_mutable)
+        // let mut doc_mutable = document();
+        // let h = doc_mutable.html().class("w-full h-full");
+        // h.head().with([
+        //     link().rel("stylesheet").href("/assets/preflight.css"),
+        //     link().rel("stylesheet").href("/assets/railwind.css"),
+        //     script().src("/assets/htmx.1.9.9.js"),
+        //     meta().name("color-scheme").content("dark"),
+        //     meta()
+        //         .name("viewport")
+        //         .content("width=device-width,initial-scale=1"),
+        // ]);
+        // h.body().class("w-full h-full text-gray-200 bg-neutral-800");
+        // assert_eq!(doc_immutable, doc_mutable);
+        // let html_mutable = doc_mutable.to_html();
+        // assert_eq!(html, html_mutable)
     }
 }

@@ -19,6 +19,16 @@ macro_rules! define_tag_function {
             }
         }
     };
+
+    ($tag:ident, $tag_str:literal) => {
+        pub fn $tag<'a>() -> Element<'a> {
+            Element::Tag {
+                tag: $tag_str,
+                attrs: Vec::new(),
+                children: Vec::new(),
+            }
+        }
+    };
 }
 
 /// Prepend `<!doctype html>` to the given children.
@@ -227,7 +237,7 @@ define_tag_function!(label);
 define_tag_function!(legend);
 define_tag_function!(li);
 define_tag_function!(link, leaf);
-define_tag_function!(main_);
+define_tag_function!(main_, "main");
 define_tag_function!(map);
 define_tag_function!(mark);
 define_tag_function!(math);

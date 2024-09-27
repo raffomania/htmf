@@ -32,15 +32,16 @@ pub fn document<'a>() -> Element<'a> {
 
 macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag(mut self) -> Builder<'borrowed, 'element> {
-            self.element.children_mut().push($tag());
-            self.element = self.element.children_mut().last_mut().unwrap();
-            self
+        pub fn $tag(self) -> Builder<'element> {
+            Builder {
+                element: $tag(),
+                parent: Some(Box::new(self)),
+            }
         }
     };
 }
 
-impl<'borrowed, 'element> Builder<'borrowed, 'element> {
+impl<'element> Builder<'element> {
     define_tag_builder_method!(a);
     define_tag_builder_method!(abbr);
     define_tag_builder_method!(address);

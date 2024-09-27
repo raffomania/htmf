@@ -42,17 +42,17 @@ macro_rules! define_attr_method {
 
 macro_rules! define_attr_builder_method {
     ($name:ident) => {
-        pub fn $name<'temp: 'borrowed, C>(self, value: C) -> Builder<'borrowed, 'element>
+        pub fn $name<'temp: 'borrowed, C>(mut self, value: C) -> Builder<'element>
         where
             C: Into<Cow<'element, str>>,
         {
-            self.element.attrs_mut().push($name(value));
+            self.get_cursor_mut().attrs_mut().push($name(value));
             self
         }
     };
     ($name:ident, $value:literal) => {
-        pub fn $name<C>(self) -> Builder<'borrowed, 'element> {
-            self.element.attrs_mut().push($name());
+        pub fn $name<C>(mut self) -> Builder<'element> {
+            self.get_cursor_mut().attrs_mut().push($name());
             self
         }
     };
@@ -142,12 +142,12 @@ impl<'a> Element<'a> {
     define_attr_method!(width);
 }
 
-impl<'borrowed, 'element> Builder<'borrowed, 'element> {
-    pub fn attr<C>(self, name: &'static str, value: C) -> Self
+impl<'borrowed, 'element> Builder<'element> {
+    pub fn attr<C>(mut self, name: &'static str, value: C) -> Self
     where
         C: Into<Cow<'element, str>>,
     {
-        self.element.attrs_mut().push((name, value.into()));
+        self.get_cursor_mut().attrs_mut().push((name, value.into()));
         self
     }
 

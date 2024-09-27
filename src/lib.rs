@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use declare::Builder;
+use declare::{Accessor, Builder};
 
 pub mod declare;
 
@@ -45,8 +45,14 @@ impl<'a> Element<'a> {
         }
     }
 
-    pub fn nest<'borrowed>(&'borrowed mut self) -> Builder<'borrowed, 'a> {
-        Builder { element: self }
+    pub fn nest(self) -> Builder<'a> {
+        Builder {
+            element: self,
+            accessor: Accessor {
+                parent: None,
+                this: Box::new(|parent| parent),
+            },
+        }
     }
 
     pub fn to_html(&'a self) -> String {
@@ -124,21 +130,22 @@ mod tests {
         let html_immutable = doc_immutable.to_html();
         insta::assert_snapshot!(html_immutable);
 
-        let mut doc_mut = document();
-        let mut h = html().class("w-full h-full");
-        h.nest().head().add_children([
-            link().rel("stylesheet").href("/assets/preflight.css"),
-            link().rel("stylesheet").href("/assets/railwind.css"),
-            script().src("/assets/htmx.1.9.9.js"),
-            meta().name("color-scheme").content("dark"),
-            meta()
-                .name("viewport")
-                .content("width=device-width,initial-scale=1"),
-        ]);
-        h.nest()
+        let doc_mut = document()
+            .nest()
+            .html()
+            .class("w-full h-full")
+            .with([head().with([
+                link().rel("stylesheet").href("/assets/preflight.css"),
+                link().rel("stylesheet").href("/assets/railwind.css"),
+                script().src("/assets/htmx.1.9.9.js"),
+                meta().name("color-scheme").content("dark"),
+                meta()
+                    .name("viewport")
+                    .content("width=device-width,initial-scale=1"),
+            ])])
             .body()
-            .class("w-full h-full text-gray-200 bg-neutral-800");
-        doc_mut = doc_mut.with([h]);
+            .class("w-full h-full text-gray-200 bg-neutral-800")
+            .into();
         assert_eq!(doc_immutable, doc_mut);
         let html_mutable = doc_mut.to_html();
         assert_eq!(html_immutable, html_mutable)

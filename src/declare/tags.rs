@@ -1,16 +1,7 @@
 use crate::Element;
 
 macro_rules! define_tag_function {
-    ($tag:ident) => {
-        pub fn $tag<'a>() -> Element<'a> {
-            Element::Tag {
-                tag: stringify!($tag),
-                attrs: Vec::new(),
-                children: Vec::new(),
-            }
-        }
-    };
-    ($tag:ident, leaf) => {
+    ($tag:ident $(, leaf)*) => {
         pub fn $tag<'a>() -> Element<'a> {
             Element::Tag {
                 tag: stringify!($tag),
@@ -39,13 +30,7 @@ pub fn document<'a>() -> Element<'a> {
 }
 
 macro_rules! define_tag_method {
-    ($tag:ident) => {
-        pub fn $tag<'b>(&'b mut self) -> &'b mut Element<'a> {
-            self.children_mut().push($tag());
-            self.children_mut().last_mut().unwrap()
-        }
-    };
-    ($tag:ident, leaf) => {
+    ($tag:ident $(, leaf)*) => {
         pub fn $tag<'b>(&'b mut self) -> &'b mut Element<'a> {
             self.children_mut().push($tag());
             self.children_mut().last_mut().unwrap()

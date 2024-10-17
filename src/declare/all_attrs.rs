@@ -27,13 +27,17 @@ macro_rules! define_attr_method {
         where
             C: Into<Cow<'a, str>>,
         {
-            self.element.attrs.push($name(value));
+            if let Some(attrs) = self.element.attrs_mut() {
+                attrs.push($name(value));
+            }
             self
         }
     };
     ($name:ident, $value:literal) => {
         pub fn $name<C>(mut self) -> Element<'a> {
-            self.element.attrs.push($name());
+            if let Some(attrs) = self.element.attrs_mut() {
+                attrs.push($name());
+            }
             self
         }
     };

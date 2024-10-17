@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use htmf::{declare::*, element::Element};
+use htmf::declare::*;
 
 fn run(c: &mut Criterion) {
     let mut group = c.benchmark_group("run");

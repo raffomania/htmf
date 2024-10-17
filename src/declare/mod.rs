@@ -13,12 +13,7 @@ where
     C: Into<Cow<'a, str>>,
 {
     Element {
-        element: PureElement {
-            children: Vec::new(),
-            tag: "",
-            attrs: Vec::new(),
-            text: Some(value.into()),
-        },
+        element: PureElement::Text { text: value.into() },
         parent: Path::Top,
     }
 }

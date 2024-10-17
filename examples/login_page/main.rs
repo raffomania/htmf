@@ -1,5 +1,4 @@
 use garde::{self, Validate};
-use htmf::{declare::*, element::Element};
 
 #[derive(Debug)]
 pub struct FormErrors(pub garde::Report);

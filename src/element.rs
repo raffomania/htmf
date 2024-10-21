@@ -99,8 +99,8 @@ impl<'e> PureElement<'e> {
 
 impl<'e> From<Element<'e>> for PureElement<'e> {
     // TODO can we just ignore the parent like this?
-    fn from(Element { element, parent: _ }: Element<'e>) -> Self {
-        element
+    fn from(element: Element<'e>) -> Self {
+        element.into_root_element()
     }
 }
 
@@ -171,7 +171,6 @@ impl<'e> Element<'e> {
         self
     }
 
-    // TODO find a better name, wtf
     pub(crate) fn into_new_child_tag(self, new_tag: &'static str) -> Element<'e> {
         let new_element = PureElement::Tag {
             tag: new_tag,
@@ -268,17 +267,17 @@ impl<'e> Element<'e> {
         }
     }
 
-    pub fn build(self) -> PureElement<'e> {
+    pub fn into_root_element(self) -> PureElement<'e> {
         match &self.parent {
             Path::Top => self.element,
             Path::Tag { .. } | Path::Document { .. } | Path::Fragment { .. } => {
-                self.up().unwrap().build()
+                self.up().unwrap().into_root_element()
             }
         }
     }
 
     pub fn to_html(self) -> String {
-        let root = self.build();
+        let root = self.into_root_element();
         root.to_html()
     }
 }

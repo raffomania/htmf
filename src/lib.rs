@@ -25,7 +25,7 @@ mod tests {
                 ]),
                 body().class("w-full h-full text-gray-200 bg-neutral-800"),
             ])])
-            .build();
+            .into_root_element();
         let html_immutable = doc_immutable.clone().to_html();
         insta::assert_snapshot!(html_immutable);
 
@@ -43,7 +43,7 @@ mod tests {
             ])])
             .body()
             .class("w-full h-full text-gray-200 bg-neutral-800")
-            .build();
+            .into_root_element();
         let html_mutable = doc_mut.to_html();
         assert_eq!(html_immutable, html_mutable);
         assert_eq!(doc_immutable, doc_mut);

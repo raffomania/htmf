@@ -1,33 +1,33 @@
-use crate::element::Element;
+use crate::builder::Builder;
 
 macro_rules! define_tag_function {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag<'a>() -> Element<'a> {
-            Element::new_tag(stringify!($tag))
+        pub fn $tag<'a>() -> Builder<'a> {
+            Builder::new_tag(stringify!($tag))
         }
     };
 
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag<'a>() -> Element<'a> {
-            Element::new_tag($tag_str)
+        pub fn $tag<'a>() -> Builder<'a> {
+            Builder::new_tag($tag_str)
         }
     };
 }
 
 macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag(self) -> Element<'element> {
+        pub fn $tag(self) -> Builder<'element> {
             self.into_new_child_tag(stringify!($tag))
         }
     };
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag(self) -> Element<'element> {
+        pub fn $tag(self) -> Builder<'element> {
             self.into_new_child_tag($tag_str)
         }
     };
 }
 
-impl<'element> Element<'element> {
+impl<'element> Builder<'element> {
     define_tag_builder_method!(a);
     define_tag_builder_method!(abbr);
     define_tag_builder_method!(address);

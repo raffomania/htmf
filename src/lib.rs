@@ -1,4 +1,5 @@
 pub mod attr;
+pub mod builder;
 pub mod declare;
 pub mod element;
 

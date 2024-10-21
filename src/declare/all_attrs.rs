@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use crate::attr::Attr;
-use crate::element::Element;
+use crate::builder::Builder;
 
 // Take care to name the parameter `value`
 // to disable rust analyzer inlay hints
@@ -31,7 +31,7 @@ macro_rules! define_attr_function {
 
 macro_rules! define_attr_method {
     ($name:ident) => {
-        pub fn $name<C>(mut self, value: C) -> Element<'a>
+        pub fn $name<C>(mut self, value: C) -> Builder<'a>
         where
             C: Into<Cow<'a, str>>,
         {
@@ -42,7 +42,7 @@ macro_rules! define_attr_method {
         }
     };
     ($name:ident, $value:literal) => {
-        pub fn $name<C>(mut self) -> Element<'a> {
+        pub fn $name<C>(mut self) -> Builder<'a> {
             if let Some(attrs) = self.element.attrs_mut() {
                 attrs.push($name());
             }
@@ -51,7 +51,7 @@ macro_rules! define_attr_method {
     };
 }
 
-impl<'a> Element<'a> {
+impl<'a> Builder<'a> {
     define_attr_method!(accept);
     define_attr_method!(accept_charset);
     define_attr_method!(action);

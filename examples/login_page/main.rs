@@ -1,5 +1,5 @@
 use garde::{self, Validate};
-use htmf::{declare::*, element::Element};
+use htmf::declare::*;
 
 #[derive(Debug)]
 pub struct FormErrors(pub garde::Report);
@@ -27,7 +27,7 @@ pub struct Credentials {
     pub password: String,
 }
 
-fn base(children: Vec<Element>) -> Element {
+fn base(children: Vec<Builder>) -> Builder {
     html().class("w-full h-full").with([
         head().with([
             link().rel("stylesheet").href("/assets/preflight.css"),
@@ -44,7 +44,7 @@ fn base(children: Vec<Element>) -> Element {
     ])
 }
 
-fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
+fn login(errors: FormErrors, credentials: Credentials) -> Builder<'static> {
     let errors_fragment = |errors: &FormErrors, path| {
         let mut fragment = fragment();
         for message in errors.filter(path) {

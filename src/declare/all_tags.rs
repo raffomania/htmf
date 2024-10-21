@@ -1,28 +1,29 @@
+use crate::attr::IntoAttrs;
 use crate::builder::Builder;
 
 macro_rules! define_tag_function {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag<'a>() -> Builder<'a> {
-            Builder::new_tag(stringify!($tag))
+        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Builder<'a> {
+            Builder::new_tag(stringify!($tag), value.into_attrs())
         }
     };
 
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag<'a>() -> Builder<'a> {
-            Builder::new_tag($tag_str)
+        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Builder<'a> {
+            Builder::new_tag($tag_str, value.into_attrs())
         }
     };
 }
 
 macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag(self) -> Builder<'element> {
-            self.into_new_child_tag(stringify!($tag))
+        pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
+            self.into_new_child_tag(stringify!($tag), value.into_attrs())
         }
     };
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag(self) -> Builder<'element> {
-            self.into_new_child_tag($tag_str)
+        pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
+            self.into_new_child_tag($tag_str, value.into_attrs())
         }
     };
 }

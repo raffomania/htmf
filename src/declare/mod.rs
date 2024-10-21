@@ -7,7 +7,10 @@ pub use crate::builder::Builder;
 pub use all_attrs::*;
 pub use all_tags::*;
 
-use crate::element::{Element, Path};
+use crate::{
+    attr::{Attr, Attrs},
+    element::{Element, Path},
+};
 
 pub fn text<'e, C>(value: C) -> Builder<'e>
 where
@@ -45,4 +48,11 @@ pub fn document<'e>() -> Builder<'e> {
         },
         parent: Path::Top,
     }
+}
+
+pub fn attr<'a, C>(name: &'static str, value: C) -> Attrs<'a>
+where
+    C: Into<Cow<'a, str>>,
+{
+    Attrs(vec![Attr(name, value.into())])
 }

@@ -1,13 +1,16 @@
 use std::borrow::Cow;
 
-use crate::{attr::Attr, builder::Builder};
+use crate::{
+    attr::{Attr, Attrs},
+    builder::Builder,
+};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Element<'e> {
     Tag {
         children: Vec<Element<'e>>,
         tag: &'static str,
-        attrs: Vec<Attr<'e>>,
+        attrs: Attrs<'e>,
     },
     Fragment {
         children: Vec<Element<'e>>,
@@ -28,8 +31,9 @@ impl<'e> Element<'e> {
                 tag,
                 attrs,
             } => {
-                let attrs_space = if !attrs.is_empty() { " " } else { "" };
+                let attrs_space = if !attrs.0.is_empty() { " " } else { "" };
                 let attrs_html: String = attrs
+                    .0
                     .iter()
                     .map(|Attr(k, v)| format!(r#"{k}="{v}""#))
                     .collect::<Vec<_>>()
@@ -89,7 +93,7 @@ impl<'e> Element<'e> {
                 children: _,
                 tag: _,
                 attrs,
-            } => Some(attrs),
+            } => Some(&mut attrs.0),
             Element::Text { text: _ } => None,
             Element::Fragment { children: _ } => None,
             Element::Document { children: _ } => None,
@@ -108,7 +112,7 @@ pub(crate) enum Path<'e> {
     Top,
     Tag {
         tag: &'static str,
-        attrs: Vec<Attr<'e>>,
+        attrs: Attrs<'e>,
         left: Vec<Element<'e>>,
         parent: Box<Path<'e>>,
         right: Vec<Element<'e>>,

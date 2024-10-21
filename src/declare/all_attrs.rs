@@ -1,109 +1,105 @@
 use std::borrow::Cow;
 
 use crate::attr::Attr;
-use crate::builder::Builder;
+use crate::attr::Attrs;
 
 // Take care to name the parameter `value`
 // to disable rust analyzer inlay hints
 macro_rules! define_attr_function {
     ($name:ident, $key:literal) => {
-        pub fn $name<'a, C>(value: C) -> Attr<'a>
+        pub fn $name<'a, C>(value: C) -> Attrs<'a>
         where
             C: Into<Cow<'a, str>>,
         {
-            Attr($key, value.into())
+            Attrs(vec![Attr($key, value.into())])
         }
     };
     ($name:ident, $key:literal, $value:literal) => {
-        pub fn $name<'a>() -> Attr<'a> {
-            Attr($key, $value.into())
+        pub fn $name<'a>() -> Attrs<'a> {
+            Attrs(vec![Attr($key, $value.into())])
         }
     };
 }
 
-macro_rules! define_attr_method {
+macro_rules! define_attr_attrs_method {
     ($name:ident, $key: literal) => {
-        pub fn $name<C>(mut self, value: C) -> Builder<'a>
+        pub fn $name<C>(mut self, value: C) -> Attrs<'a>
         where
             C: Into<Cow<'a, str>>,
         {
-            if let Some(attrs) = self.element.attrs_mut() {
-                attrs.push(Attr($key, value.into()));
-            }
+            self.0.push(Attr($key, value.into()));
             self
         }
     };
     ($name:ident, $key: literal, $value:literal) => {
-        pub fn $name<C>(mut self) -> Builder<'a> {
-            if let Some(attrs) = self.element.attrs_mut() {
-                attrs.push(Attr($key, $value.into()));
-            }
+        pub fn $name<C>(mut self) -> Attrs<'a> {
+            self.0.push(Attr($key, $value.into()));
             self
         }
     };
 }
 
-impl<'a> Builder<'a> {
-    define_attr_method!(accept, "accept");
-    define_attr_method!(accept_charset, "accept_charset");
-    define_attr_method!(action, "action");
-    define_attr_method!(alt, "alt");
-    define_attr_method!(aria_checked, "aria_checked");
-    define_attr_method!(aria_current, "aria_current");
-    define_attr_method!(aria_disabled, "aria_disabled", "true");
-    define_attr_method!(aria_hidden, "aria_hidden", "true");
-    define_attr_method!(aria_invalid, "aria_invalid", "true");
-    define_attr_method!(aria_label, "aria_label");
-    define_attr_method!(aria_labelledby, "aria_labelledby");
-    define_attr_method!(aria_placeholder, "aria_placeholder");
-    define_attr_method!(aria_readonly, "aria_readonly");
-    define_attr_method!(aria_required, "aria_required");
-    define_attr_method!(async_, "async", "true");
-    define_attr_method!(autocapitalize, "autocapitalize");
-    define_attr_method!(autocomplete, "autocomplete");
-    define_attr_method!(autofocus, "autofocus", "true");
-    define_attr_method!(autoplay, "autoplay", "true");
-    define_attr_method!(capture, "capture");
-    define_attr_method!(charset, "charset");
-    define_attr_method!(checked, "checked", "true");
-    define_attr_method!(cite_attr, "cite_attr");
-    define_attr_method!(class, "class");
-    define_attr_method!(content, "content");
-    define_attr_method!(contenteditable, "contenteditable", "true");
-    define_attr_method!(crossorigin, "crossorigin");
-    define_attr_method!(defer, "defer", "true");
-    define_attr_method!(disabled, "disabled", "true");
-    define_attr_method!(draggable, "draggable", "true");
-    define_attr_method!(enctype, "enctype");
-    define_attr_method!(for_, "for");
-    define_attr_method!(formaction, "formaction");
-    define_attr_method!(height, "height");
-    define_attr_method!(href, "href");
-    define_attr_method!(http_equiv, "http_equiv");
-    define_attr_method!(id, "id");
-    define_attr_method!(integrity, "integrity");
-    define_attr_method!(lang, "lang");
-    define_attr_method!(loop_, "loop", "true");
-    define_attr_method!(maxlength, "maxlength");
-    define_attr_method!(method, "method");
-    define_attr_method!(minlength, "minlength");
-    define_attr_method!(name, "name");
-    define_attr_method!(placeholder, "placeholder");
-    define_attr_method!(preload, "preload", "true");
-    define_attr_method!(property, "property");
-    define_attr_method!(readonly, "readonly", "true");
-    define_attr_method!(rel, "rel");
-    define_attr_method!(required, "required");
-    define_attr_method!(role, "role");
-    define_attr_method!(selected, "selected", "true");
-    define_attr_method!(src, "src");
-    define_attr_method!(style, "style");
-    define_attr_method!(tabindex, "tabindex");
-    define_attr_method!(target, "target");
-    define_attr_method!(title, "title");
-    define_attr_method!(type_, "type");
-    define_attr_method!(value, "value");
-    define_attr_method!(width, "width");
+impl<'a> Attrs<'a> {
+    define_attr_attrs_method!(accept, "accept");
+    define_attr_attrs_method!(accept_charset, "accept_charset");
+    define_attr_attrs_method!(action, "action");
+    define_attr_attrs_method!(alt, "alt");
+    define_attr_attrs_method!(aria_checked, "aria_checked");
+    define_attr_attrs_method!(aria_current, "aria_current");
+    define_attr_attrs_method!(aria_disabled, "aria_disabled", "true");
+    define_attr_attrs_method!(aria_hidden, "aria_hidden", "true");
+    define_attr_attrs_method!(aria_invalid, "aria_invalid", "true");
+    define_attr_attrs_method!(aria_label, "aria_label");
+    define_attr_attrs_method!(aria_labelledby, "aria_labelledby");
+    define_attr_attrs_method!(aria_placeholder, "aria_placeholder");
+    define_attr_attrs_method!(aria_readonly, "aria_readonly");
+    define_attr_attrs_method!(aria_required, "aria_required");
+    define_attr_attrs_method!(async_, "async", "true");
+    define_attr_attrs_method!(autocapitalize, "autocapitalize");
+    define_attr_attrs_method!(autocomplete, "autocomplete");
+    define_attr_attrs_method!(autofocus, "autofocus", "true");
+    define_attr_attrs_method!(autoplay, "autoplay", "true");
+    define_attr_attrs_method!(capture, "capture");
+    define_attr_attrs_method!(charset, "charset");
+    define_attr_attrs_method!(checked, "checked", "true");
+    define_attr_attrs_method!(cite_attr, "cite_attr");
+    define_attr_attrs_method!(class, "class");
+    define_attr_attrs_method!(content, "content");
+    define_attr_attrs_method!(contenteditable, "contenteditable", "true");
+    define_attr_attrs_method!(crossorigin, "crossorigin");
+    define_attr_attrs_method!(defer, "defer", "true");
+    define_attr_attrs_method!(disabled, "disabled", "true");
+    define_attr_attrs_method!(draggable, "draggable", "true");
+    define_attr_attrs_method!(enctype, "enctype");
+    define_attr_attrs_method!(for_, "for");
+    define_attr_attrs_method!(formaction, "formaction");
+    define_attr_attrs_method!(height, "height");
+    define_attr_attrs_method!(href, "href");
+    define_attr_attrs_method!(http_equiv, "http_equiv");
+    define_attr_attrs_method!(id, "id");
+    define_attr_attrs_method!(integrity, "integrity");
+    define_attr_attrs_method!(lang, "lang");
+    define_attr_attrs_method!(loop_, "loop", "true");
+    define_attr_attrs_method!(maxlength, "maxlength");
+    define_attr_attrs_method!(method, "method");
+    define_attr_attrs_method!(minlength, "minlength");
+    define_attr_attrs_method!(name, "name");
+    define_attr_attrs_method!(placeholder, "placeholder");
+    define_attr_attrs_method!(preload, "preload", "true");
+    define_attr_attrs_method!(property, "property");
+    define_attr_attrs_method!(readonly, "readonly", "true");
+    define_attr_attrs_method!(rel, "rel");
+    define_attr_attrs_method!(required, "required");
+    define_attr_attrs_method!(role, "role");
+    define_attr_attrs_method!(selected, "selected", "true");
+    define_attr_attrs_method!(src, "src");
+    define_attr_attrs_method!(style, "style");
+    define_attr_attrs_method!(tabindex, "tabindex");
+    define_attr_attrs_method!(target, "target");
+    define_attr_attrs_method!(title, "title");
+    define_attr_attrs_method!(type_, "type");
+    define_attr_attrs_method!(value, "value");
+    define_attr_attrs_method!(width, "width");
 }
 
 define_attr_function!(accept, "accept");

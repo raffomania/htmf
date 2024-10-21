@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use crate::{
-    attr::Attr,
+    attr::{Attr, Attrs},
     element::{Element, Path},
 };
 
@@ -12,12 +12,12 @@ pub struct Builder<'e> {
 }
 
 impl<'e> Builder<'e> {
-    pub fn new_tag(tag: &'static str) -> Builder<'e> {
+    pub fn new_tag(tag: &'static str, attrs: Attrs<'e>) -> Builder<'e> {
         Builder {
             element: Element::Tag {
                 children: Vec::new(),
                 tag,
-                attrs: Vec::new(),
+                attrs,
             },
             parent: Path::Top,
         }
@@ -44,10 +44,10 @@ impl<'e> Builder<'e> {
         self
     }
 
-    pub(crate) fn into_new_child_tag(self, new_tag: &'static str) -> Builder<'e> {
+    pub(crate) fn into_new_child_tag(self, new_tag: &'static str, attrs: Attrs<'e>) -> Builder<'e> {
         let new_element = Element::Tag {
             tag: new_tag,
-            attrs: Vec::new(),
+            attrs,
             children: Vec::new(),
         };
         self.into_new_child_element(new_element)

@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use crate::{attr::Attr, builder::Builder};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub(crate) enum Element<'e> {
+pub enum Element<'e> {
     Tag {
         children: Vec<Element<'e>>,
         tag: &'static str,
@@ -98,7 +98,6 @@ impl<'e> Element<'e> {
 }
 
 impl<'e> From<Builder<'e>> for Element<'e> {
-    // TODO can we just ignore the parent like this?
     fn from(element: Builder<'e>) -> Self {
         element.into_root_element()
     }

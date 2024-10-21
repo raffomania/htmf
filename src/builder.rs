@@ -25,9 +25,9 @@ impl<'e> Builder<'e> {
 
     pub fn with<C>(mut self, new_children: C) -> Builder<'e>
     where
-        C: Into<Vec<Builder<'e>>>,
+        C: IntoElements<'e>,
     {
-        let mut new_children = new_children.into().into_iter().map(Element::from).collect();
+        let mut new_children = new_children.into_elements();
         if let Some(children) = self.element.children_mut() {
             children.append(&mut new_children);
         }
@@ -152,5 +152,27 @@ impl<'e> Builder<'e> {
     pub fn to_html(self) -> String {
         let root = self.into_root_element();
         root.to_html()
+    }
+}
+
+pub trait IntoElements<'a> {
+    fn into_elements(self) -> Vec<Element<'a>>;
+}
+
+impl<'a> IntoElements<'a> for Builder<'a> {
+    fn into_elements(self) -> Vec<Element<'a>> {
+        vec![self.into()]
+    }
+}
+
+impl<'a> IntoElements<'a> for Vec<Builder<'a>> {
+    fn into_elements(self) -> Vec<Element<'a>> {
+        self.into_iter().map(Element::from).collect()
+    }
+}
+
+impl<'a, const N: usize> IntoElements<'a> for [Builder<'a>; N] {
+    fn into_elements(self) -> Vec<Element<'a>> {
+        self.into_iter().map(Element::from).collect()
     }
 }

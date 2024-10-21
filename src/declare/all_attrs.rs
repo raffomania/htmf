@@ -11,7 +11,7 @@ macro_rules! define_attr_function {
         where
             C: Into<Cow<'a, str>>,
         {
-            (stringify!($name), value.into())
+            Attr(stringify!($name), value.into())
         }
     };
     ($name:ident, $key:literal) => {
@@ -19,12 +19,12 @@ macro_rules! define_attr_function {
         where
             C: Into<Cow<'a, str>>,
         {
-            ($key, value.into())
+            Attr($key, value.into())
         }
     };
     ($name:ident, $key:literal, $value:literal) => {
         pub fn $name<'a>() -> Attr<'a> {
-            ($key, $value.into())
+            Attr($key, $value.into())
         }
     };
 }

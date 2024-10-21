@@ -31,7 +31,7 @@ impl<'e> PureElement<'e> {
                 let attrs_space = if !attrs.is_empty() { " " } else { "" };
                 let attrs_html: String = attrs
                     .iter()
-                    .map(|(k, v)| format!(r#"{k}="{v}""#))
+                    .map(|Attr(k, v)| format!(r#"{k}="{v}""#))
                     .collect::<Vec<_>>()
                     .join(" ");
 
@@ -166,7 +166,7 @@ impl<'e> Element<'e> {
         C: Into<Cow<'e, str>>,
     {
         if let Some(attrs) = self.element.attrs_mut() {
-            attrs.push((name, value.into()));
+            attrs.push(Attr(name, value.into()));
         }
         self
     }

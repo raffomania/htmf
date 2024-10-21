@@ -60,18 +60,22 @@ fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
             "leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center \
              justify-center disabled:bg-neutral-500 text-neutral-900",
         )
-        .with([span().class("inline-block w-09 h-4").with([span().class(
+        .with([text("Sign in")])
+        .span()
+        .class("inline-block w-09 h-4")
+        .span()
+        .class(
             "block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin \
              border-t-transparent htmx-indicator",
-        )])]);
+        );
 
     let form_fields = [
         h1().class("text-2xl font-bold tracking-tight text-center")
-            .with([text("Sign in to your account")]),
+            .text("Sign in to your account"),
         label()
             .class("mt-10 text-neutral-400")
             .name("credentials[username]")
-            .with([text("Username")]),
+            .text("Username"),
         errors_fragment(&errors, "username"),
         input()
             .type_("text")
@@ -82,7 +86,7 @@ fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
         label()
             .class("mt-4 text-neutral-400")
             .name("credentials[password]")
-            .with([text("Password")]),
+            .text("Password"),
         errors_fragment(&errors, "password"),
         input()
             .type_("password")
@@ -98,12 +102,8 @@ fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
             .method("post")
             .class("flex flex-col justify-center flex-1 max-w-md min-h-full px-4 mx-auto")
             .attr("hx-boost", "true")
-            .with(
-                form_fields
-                    .into_iter()
-                    .chain([submit_button])
-                    .collect::<Vec<_>>(),
-            )]
+            .with(form_fields)
+            .with([submit_button])]
         .into(),
     )
 }

@@ -9,7 +9,7 @@ macro_rules! define_tag_function {
 
     ($tag:ident, $tag_str:literal) => {
         pub fn $tag<'a>() -> Element<'a> {
-            Element::new_tag(stringify!($tag))
+            Element::new_tag($tag_str)
         }
     };
 }

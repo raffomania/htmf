@@ -140,7 +140,7 @@ impl<'e> Builder<'e> {
         }
     }
 
-    pub fn into_root_element(self) -> Element<'e> {
+    pub(crate) fn into_root_element(self) -> Element<'e> {
         match &self.parent {
             Path::Top => self.element,
             Path::Tag { .. } | Path::Document { .. } | Path::Fragment { .. } => {

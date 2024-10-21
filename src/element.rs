@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use crate::{attr::Attr, builder::Builder};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub enum Element<'e> {
+pub(crate) enum Element<'e> {
     Tag {
         children: Vec<Element<'e>>,
         tag: &'static str,
@@ -105,7 +105,7 @@ impl<'e> From<Builder<'e>> for Element<'e> {
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub enum Path<'e> {
+pub(crate) enum Path<'e> {
     Top,
     Tag {
         tag: &'static str,

@@ -53,7 +53,12 @@ impl<'e> Element<'e> {
     }
 
     fn children_html(children: &[Element<'e>], indent: bool) -> String {
-        let mut children_html = if !children.is_empty() { "\n" } else { "" }.to_string();
+        let mut children_html = if !children.is_empty() && indent {
+            "\n"
+        } else {
+            ""
+        }
+        .to_string();
         children_html.push_str(
             &children
                 .iter()
@@ -67,7 +72,7 @@ impl<'e> Element<'e> {
             children_html = children_html.replace("\n", "\n    ");
         }
 
-        if !children.is_empty() {
+        if !children.is_empty() && indent {
             children_html.push('\n');
         }
 

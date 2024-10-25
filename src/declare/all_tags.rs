@@ -18,12 +18,12 @@ macro_rules! define_tag_function {
 macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
         pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
-            self.into_new_child_tag(stringify!($tag), value.into_attrs())
+            self.add_sibling_tag(stringify!($tag), value.into_attrs())
         }
     };
     ($tag:ident, $tag_str:literal) => {
         pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
-            self.into_new_child_tag($tag_str, value.into_attrs())
+            self.add_sibling_tag($tag_str, value.into_attrs())
         }
     };
 }

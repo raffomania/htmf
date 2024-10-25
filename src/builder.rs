@@ -44,13 +44,35 @@ impl<'e> Builder<'e> {
         self
     }
 
-    pub(crate) fn into_new_child_tag(self, new_tag: &'static str, attrs: Attrs<'e>) -> Builder<'e> {
+    pub(crate) fn add_sibling_tag(self, new_tag: &'static str, attrs: Attrs<'e>) -> Builder<'e> {
         let new_element = Element::Tag {
             tag: new_tag,
             attrs,
             children: Vec::new(),
         };
-        self.into_new_child_element(new_element)
+        self.add_sibling_element(new_element)
+    }
+
+    pub(crate) fn add_sibling_element(mut self, element: Element<'e>) -> Builder<'e> {
+        match self.parent {
+            Path::Top => {
+                let new_parent = Path::Fragment {
+                    left: vec![self.element],
+                    parent: Box::new(Path::Top),
+                    right: Vec::new(),
+                };
+                Builder {
+                    element,
+                    parent: new_parent,
+                }
+            }
+            Path::Tag { ref mut right, .. }
+            | Path::Fragment { ref mut right, .. }
+            | Path::Document { ref mut right, .. } => {
+                right.push(element);
+                self
+            }
+        }
     }
 
     pub(crate) fn into_new_child_element(self, element: Element<'e>) -> Builder<'e> {

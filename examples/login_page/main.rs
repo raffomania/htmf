@@ -54,12 +54,14 @@ fn login(errors: FormErrors, credentials: Credentials) -> Builder<'static> {
         "leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center \
          justify-center disabled:bg-neutral-500 text-neutral-900",
     ))
-    .with([text("Sign in")])
-    .span(class("inline-block w-09 h-4"))
-    .span(class(
-        "block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin \
-         border-t-transparent htmx-indicator",
-    ));
+    .with(
+        text("Sign in")
+            .span(class("inline-block w-09 h-4"))
+            .with(span(class(
+                "block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin \
+                 border-t-transparent htmx-indicator",
+            ))),
+    );
 
     let form_fields = [
         h1(class("text-2xl font-bold tracking-tight text-center")).text("Sign in to your account"),
@@ -91,7 +93,7 @@ fn login(errors: FormErrors, credentials: Credentials) -> Builder<'static> {
             attr("hx-boost", "true"),
         ])
         .with(form_fields)
-        .with([submit_button])]
+        .with(submit_button)]
         .into(),
     )
 }

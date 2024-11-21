@@ -1,10 +1,33 @@
 use std::borrow::Cow;
 
-use crate::{
-    attr::{Attr, Attrs},
-    element::{Element, Path},
-};
+use crate::{attr::Attrs, element::Element, into_elements::IntoElements};
 
+#[derive(PartialEq, Eq, Debug, Clone)]
+pub(crate) enum Path<'e> {
+    Top,
+    Tag {
+        tag: &'static str,
+        attrs: Attrs<'e>,
+        left: Vec<Element<'e>>,
+        parent: Box<Path<'e>>,
+        right: Vec<Element<'e>>,
+    },
+    Fragment {
+        left: Vec<Element<'e>>,
+        parent: Box<Path<'e>>,
+        right: Vec<Element<'e>>,
+    },
+    Document {
+        left: Vec<Element<'e>>,
+        parent: Box<Path<'e>>,
+        right: Vec<Element<'e>>,
+    },
+}
+
+// TODO: it's annoying to switch all signatures from Element to Builder when turning on the `unstable-builder` flag.
+// Make the `parent` field conditional instead?
+// If we use `Builder` as the "main" public
+// type, rename it to `Element` and rename `Element` to something else?
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Builder<'e> {
     pub(crate) element: Element<'e>,
@@ -27,10 +50,7 @@ impl<'e> Builder<'e> {
     where
         C: IntoElements<'e>,
     {
-        let mut new_children = new_children.into_elements();
-        if let Some(children) = self.element.children_mut() {
-            children.append(&mut new_children);
-        }
+        self.element = self.element.with(new_children);
         self
     }
 
@@ -38,9 +58,7 @@ impl<'e> Builder<'e> {
     where
         C: Into<Cow<'e, str>>,
     {
-        if let Some(attrs) = self.element.attrs_mut() {
-            attrs.push(Attr(name, value.into()));
-        }
+        self.element = self.element.attr(name, value);
         self
     }
 
@@ -155,8 +173,21 @@ impl<'e> Builder<'e> {
     }
 }
 
-pub trait IntoElements<'a> {
-    fn into_elements(self) -> Vec<Element<'a>>;
+// -- Trait impls
+
+impl<'e> From<Builder<'e>> for Element<'e> {
+    fn from(element: Builder<'e>) -> Self {
+        element.into_root_element()
+    }
+}
+
+impl<'e> From<Element<'e>> for Builder<'e> {
+    fn from(element: Element<'e>) -> Self {
+        Builder {
+            element,
+            parent: Path::Top,
+        }
+    }
 }
 
 impl<'a> IntoElements<'a> for Builder<'a> {

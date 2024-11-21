@@ -1,6 +1,12 @@
 use crate::attr::IntoAttrs;
+
+#[cfg(feature = "unstable-builder")]
 use crate::builder::Builder;
 
+#[cfg(not(feature = "unstable-builder"))]
+use crate::element::Element;
+
+#[cfg(feature = "unstable-builder")]
 macro_rules! define_tag_function {
     ($tag:ident $(, leaf)*) => {
         pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Builder<'a> {
@@ -15,6 +21,30 @@ macro_rules! define_tag_function {
     };
 }
 
+#[cfg(not(feature = "unstable-builder"))]
+macro_rules! define_tag_function {
+    ($tag:ident $(, leaf)*) => {
+        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Element<'a> {
+            Element::Tag {
+                tag: stringify!($tag),
+                attrs: value.into_attrs(),
+                children: Vec::new(),
+            }
+        }
+    };
+
+    ($tag:ident, $tag_str:literal) => {
+        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Element<'a> {
+            Element::Tag {
+                tag: $tag_str,
+                attrs: value.into_attrs(),
+                children: Vec::new(),
+            }
+        }
+    };
+}
+
+#[cfg(feature = "unstable-builder")]
 macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
         pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
@@ -28,6 +58,7 @@ macro_rules! define_tag_builder_method {
     };
 }
 
+#[cfg(feature = "unstable-builder")]
 impl<'element> Builder<'element> {
     define_tag_builder_method!(a);
     define_tag_builder_method!(abbr);

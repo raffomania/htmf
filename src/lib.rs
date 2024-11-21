@@ -1,7 +1,9 @@
 pub mod attr;
+#[cfg(feature = "unstable-builder")]
 pub mod builder;
 pub mod declare;
 pub mod element;
+pub mod into_elements;
 
 #[cfg(test)]
 mod tests {
@@ -9,38 +11,39 @@ mod tests {
 
     use declare::*;
 
-    use pretty_assertions::assert_eq;
-
     #[test]
     fn base() {
-        let doc_immutable = document()
-            .with([html(class("w-full h-full")).with([
-                head([]).with([
-                    link(rel("stylesheet").href("/assets/preflight.css")),
-                    link(rel("stylesheet").href("/assets/railwind.css")),
-                    script(src("/assets/htmx.1.9.9.js")),
-                    meta(name("color-scheme").content("dark")),
-                    meta(name("viewport").content("width=device-width,initial-scale=1")),
-                ]),
-                body(class("w-full h-full text-gray-200 bg-neutral-800")),
-            ])])
-            .into_root_element();
-        let html_immutable = doc_immutable.clone().to_html();
-        insta::assert_snapshot!(html_immutable);
-
-        let doc_mut = document()
-            .html(class("w-full h-full"))
-            .with([head([]).with([
+        let doc = document().with([html(class("w-full h-full")).with([
+            head([]).with([
                 link(rel("stylesheet").href("/assets/preflight.css")),
                 link(rel("stylesheet").href("/assets/railwind.css")),
                 script(src("/assets/htmx.1.9.9.js")),
                 meta(name("color-scheme").content("dark")),
                 meta(name("viewport").content("width=device-width,initial-scale=1")),
-            ])])
-            .body(class("w-full h-full text-gray-200 bg-neutral-800"))
-            .into_root_element();
-        let html_mutable = doc_mut.to_html();
-        assert_eq!(html_immutable, html_mutable);
-        assert_eq!(doc_immutable, doc_mut);
+            ]),
+            body(class("w-full h-full text-gray-200 bg-neutral-800")),
+        ])]);
+        let html = doc.clone().to_html();
+        insta::assert_snapshot!(html);
+
+        #[cfg(feature = "unstable-builder")]
+        {
+            use pretty_assertions::assert_eq;
+
+            let doc_builder = document()
+                .html(class("w-full h-full"))
+                .with([head([]).with([
+                    link(rel("stylesheet").href("/assets/preflight.css")),
+                    link(rel("stylesheet").href("/assets/railwind.css")),
+                    script(src("/assets/htmx.1.9.9.js")),
+                    meta(name("color-scheme").content("dark")),
+                    meta(name("viewport").content("width=device-width,initial-scale=1")),
+                ])])
+                .body(class("w-full h-full text-gray-200 bg-neutral-800"))
+                .into_root_element();
+            let builder_html = doc_builder.to_html();
+            assert_eq!(html, builder_html);
+            assert_eq!(doc, doc_builder);
+        }
     }
 }

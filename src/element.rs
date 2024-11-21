@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use crate::{
     attr::{Attr, Attrs},
-    builder::Builder,
+    into_elements::IntoElements,
 };
 
 #[derive(PartialEq, Eq, Debug, Clone)]
@@ -52,6 +52,27 @@ impl<'e> Element<'e> {
         }
     }
 
+    pub fn with<C>(mut self, new_children: C) -> Self
+    where
+        C: IntoElements<'e>,
+    {
+        let mut new_children = new_children.into_elements();
+        if let Some(children) = self.children_mut() {
+            children.append(&mut new_children);
+        }
+        self
+    }
+
+    pub fn attr<C>(mut self, name: &'static str, value: C) -> Self
+    where
+        C: Into<Cow<'e, str>>,
+    {
+        if let Some(attrs) = self.attrs_mut() {
+            attrs.push(Attr(name, value.into()));
+        }
+        self
+    }
+
     fn children_html(children: &[Element<'e>], indent: bool) -> String {
         let mut children_html = if !children.is_empty() { "\n" } else { "" }.to_string();
         children_html.push_str(
@@ -99,32 +120,4 @@ impl<'e> Element<'e> {
             Element::Document { children: _ } => None,
         }
     }
-}
-
-impl<'e> From<Builder<'e>> for Element<'e> {
-    fn from(element: Builder<'e>) -> Self {
-        element.into_root_element()
-    }
-}
-
-#[derive(PartialEq, Eq, Debug, Clone)]
-pub(crate) enum Path<'e> {
-    Top,
-    Tag {
-        tag: &'static str,
-        attrs: Attrs<'e>,
-        left: Vec<Element<'e>>,
-        parent: Box<Path<'e>>,
-        right: Vec<Element<'e>>,
-    },
-    Fragment {
-        left: Vec<Element<'e>>,
-        parent: Box<Path<'e>>,
-        right: Vec<Element<'e>>,
-    },
-    Document {
-        left: Vec<Element<'e>>,
-        parent: Box<Path<'e>>,
-        right: Vec<Element<'e>>,
-    },
 }

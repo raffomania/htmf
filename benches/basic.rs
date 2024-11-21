@@ -23,6 +23,7 @@ fn run(c: &mut Criterion) {
                 .to_html();
         });
     });
+    #[cfg(feature = "unstable-builder")]
     group.bench_function("builder", |b| {
         b.iter(|| {
             html(class("w-full h-full"))

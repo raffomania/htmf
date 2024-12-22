@@ -4,6 +4,7 @@ pub mod builder;
 pub mod declare;
 pub mod element;
 pub mod into_elements;
+pub mod prelude;
 
 #[cfg(test)]
 mod tests {

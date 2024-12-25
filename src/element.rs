@@ -80,6 +80,7 @@ impl Element {
             .filter(|c| !matches!(c, Element::Nothing))
             .map(Element::to_html)
             .collect::<Vec<_>>()
+            // TODO don't add newlines to text children
             .join("\n");
 
         // If there are any children, give each of them their own line.

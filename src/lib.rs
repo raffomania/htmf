@@ -47,4 +47,11 @@ mod tests {
             assert_eq!(doc, doc_builder);
         }
     }
+
+    #[test]
+    fn nothing_element() {
+        assert_eq!(nothing().to_html(), "");
+        let doc = body([]).with(nothing());
+        assert_eq!(doc.to_html(), body([]).to_html());
+    }
 }

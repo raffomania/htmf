@@ -81,7 +81,9 @@ impl Builder {
                 parent: Box::new(self.parent),
                 right: Vec::new(),
             },
+            // TODO make this impossible to reach
             Element::Text { .. } => return self,
+            Element::Nothing => return self,
         };
 
         Builder { element, parent }

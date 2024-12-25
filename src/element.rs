@@ -19,6 +19,7 @@ pub enum Element {
     Text {
         text: String,
     },
+    Nothing,
 }
 
 impl Element {
@@ -47,6 +48,7 @@ impl Element {
                 let children_html = Self::children_html(children, false);
                 format!("<!doctype html>\n{children_html}")
             }
+            Element::Nothing => "".to_string(),
         }
     }
 
@@ -71,26 +73,30 @@ impl Element {
         self
     }
 
-    fn children_html(children: &[Element], indent: bool) -> String {
-        let mut children_html = if !children.is_empty() { "\n" } else { "" }.to_string();
-        children_html.push_str(
-            &children
-                .iter()
-                .map(|c| c.to_html())
-                .collect::<Vec<_>>()
-                .join("\n"),
-        );
+    fn children_html(children_with_empty: &[Element], indent: bool) -> String {
+        let children_html = children_with_empty
+            .iter()
+            .filter(|c| !matches!(c, Element::Nothing))
+            .map(Element::to_html)
+            .collect::<Vec<_>>()
+            .join("\n");
+
+        // If there are any children, give each of them their own line.
+        let mut result = if !children_html.is_empty() { "\n" } else { "" }.to_string();
+
+        result.push_str(&children_html);
 
         if indent {
             // Indent all children
-            children_html = children_html.replace("\n", "\n    ");
+            result = result.replace("\n", "\n    ");
         }
 
-        if !children.is_empty() {
-            children_html.push('\n');
+        // If there are any children, make sure the closing tag is on its own line.
+        if !children_html.is_empty() {
+            result.push('\n');
         }
 
-        children_html
+        result
     }
 
     pub(crate) fn children_mut(&mut self) -> Option<&mut Vec<Element>> {
@@ -103,6 +109,7 @@ impl Element {
             Element::Text { text: _ } => None,
             Element::Fragment { children } => Some(children),
             Element::Document { children } => Some(children),
+            Element::Nothing => None,
         }
     }
 
@@ -116,6 +123,7 @@ impl Element {
             Element::Text { text: _ } => None,
             Element::Fragment { children: _ } => None,
             Element::Document { children: _ } => None,
+            Element::Nothing => None,
         }
     }
 }

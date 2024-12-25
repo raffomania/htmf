@@ -46,6 +46,10 @@ pub fn fragment() -> Element {
     }
 }
 
+pub fn nothing() -> Element {
+    Element::Nothing
+}
+
 pub fn attr<C>(name: &'static str, value: C) -> Attrs
 where
     C: Into<String>,

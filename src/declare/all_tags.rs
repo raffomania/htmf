@@ -160,6 +160,7 @@ impl Builder {
     define_tag_builder_method!(th);
     define_tag_builder_method!(thead);
     define_tag_builder_method!(time);
+    define_tag_builder_method!(title);
     define_tag_builder_method!(tr);
     define_tag_builder_method!(track, leaf);
     define_tag_builder_method!(u);
@@ -274,6 +275,7 @@ impl Element {
     define_tag_element_method!(th);
     define_tag_element_method!(thead);
     define_tag_element_method!(time);
+    define_tag_element_method!(title);
     define_tag_element_method!(tr);
     define_tag_element_method!(track, leaf);
     define_tag_element_method!(u);
@@ -386,6 +388,7 @@ define_tag_function!(tfoot);
 define_tag_function!(th);
 define_tag_function!(thead);
 define_tag_function!(time);
+define_tag_function!(title_tag, "title");
 define_tag_function!(tr);
 define_tag_function!(track, leaf);
 define_tag_function!(u);

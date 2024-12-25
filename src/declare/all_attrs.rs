@@ -156,7 +156,7 @@ define_attr_function!(src, "src");
 define_attr_function!(style, "style");
 define_attr_function!(tabindex, "tabindex");
 define_attr_function!(target, "target");
-define_attr_function!(title, "title");
+define_attr_function!(title_attr, "title");
 define_attr_function!(type_, "type");
 define_attr_function!(value, "value");
 define_attr_function!(width, "width");

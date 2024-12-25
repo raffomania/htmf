@@ -29,6 +29,7 @@ mod tests {
 
         #[cfg(feature = "unstable-builder")]
         {
+            use builder::Builder;
             use pretty_assertions::assert_eq;
 
             let doc_builder = document()

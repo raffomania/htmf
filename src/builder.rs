@@ -1,26 +1,24 @@
-use std::borrow::Cow;
-
 use crate::{attr::Attrs, element::Element, into_elements::IntoElements};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub(crate) enum Path<'e> {
+pub(crate) enum Path {
     Top,
     Tag {
         tag: &'static str,
-        attrs: Attrs<'e>,
-        left: Vec<Element<'e>>,
-        parent: Box<Path<'e>>,
-        right: Vec<Element<'e>>,
+        attrs: Attrs,
+        left: Vec<Element>,
+        parent: Box<Path>,
+        right: Vec<Element>,
     },
     Fragment {
-        left: Vec<Element<'e>>,
-        parent: Box<Path<'e>>,
-        right: Vec<Element<'e>>,
+        left: Vec<Element>,
+        parent: Box<Path>,
+        right: Vec<Element>,
     },
     Document {
-        left: Vec<Element<'e>>,
-        parent: Box<Path<'e>>,
-        right: Vec<Element<'e>>,
+        left: Vec<Element>,
+        parent: Box<Path>,
+        right: Vec<Element>,
     },
 }
 
@@ -29,13 +27,13 @@ pub(crate) enum Path<'e> {
 // If we use `Builder` as the "main" public
 // type, rename it to `Element` and rename `Element` to something else?
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub struct Builder<'e> {
-    pub(crate) element: Element<'e>,
-    pub(crate) parent: Path<'e>,
+pub struct Builder {
+    pub(crate) element: Element,
+    pub(crate) parent: Path,
 }
 
-impl<'e> Builder<'e> {
-    pub fn new_tag(tag: &'static str, attrs: Attrs<'e>) -> Builder<'e> {
+impl Builder {
+    pub fn new_tag(tag: &'static str, attrs: Attrs) -> Builder {
         Builder {
             element: Element::Tag {
                 children: Vec::new(),
@@ -46,23 +44,23 @@ impl<'e> Builder<'e> {
         }
     }
 
-    pub fn with<C>(mut self, new_children: C) -> Builder<'e>
+    pub fn with<C>(mut self, new_children: C) -> Builder
     where
-        C: IntoElements<'e>,
+        C: IntoElements,
     {
         self.element = self.element.with(new_children);
         self
     }
 
-    pub fn attr<C>(mut self, name: &'static str, value: C) -> Builder<'e>
+    pub fn attr<C>(mut self, name: &'static str, value: C) -> Builder
     where
-        C: Into<Cow<'e, str>>,
+        C: Into<String>,
     {
         self.element = self.element.attr(name, value);
         self
     }
 
-    pub(crate) fn into_new_child_tag(self, new_tag: &'static str, attrs: Attrs<'e>) -> Builder<'e> {
+    pub(crate) fn into_new_child_tag(self, new_tag: &'static str, attrs: Attrs) -> Builder {
         let new_element = Element::Tag {
             tag: new_tag,
             attrs,
@@ -71,7 +69,7 @@ impl<'e> Builder<'e> {
         self.into_new_child_element(new_element)
     }
 
-    pub(crate) fn into_new_child_element(self, element: Element<'e>) -> Builder<'e> {
+    pub(crate) fn into_new_child_element(self, element: Element) -> Builder {
         let parent = match self.element {
             Element::Tag {
                 children,
@@ -100,7 +98,7 @@ impl<'e> Builder<'e> {
         Builder { element, parent }
     }
 
-    pub fn up(self) -> Option<Builder<'e>> {
+    pub fn up(self) -> Option<Builder> {
         match self.parent {
             Path::Top => None,
             Path::Tag {
@@ -158,7 +156,7 @@ impl<'e> Builder<'e> {
         }
     }
 
-    pub(crate) fn into_root_element(self) -> Element<'e> {
+    pub(crate) fn into_root_element(self) -> Element {
         match &self.parent {
             Path::Top => self.element,
             Path::Tag { .. } | Path::Document { .. } | Path::Fragment { .. } => {
@@ -175,14 +173,14 @@ impl<'e> Builder<'e> {
 
 // -- Trait impls
 
-impl<'e> From<Builder<'e>> for Element<'e> {
-    fn from(element: Builder<'e>) -> Self {
+impl From<Builder> for Element {
+    fn from(element: Builder) -> Self {
         element.into_root_element()
     }
 }
 
-impl<'e> From<Element<'e>> for Builder<'e> {
-    fn from(element: Element<'e>) -> Self {
+impl From<Element> for Builder {
+    fn from(element: Element) -> Self {
         Builder {
             element,
             parent: Path::Top,
@@ -190,20 +188,20 @@ impl<'e> From<Element<'e>> for Builder<'e> {
     }
 }
 
-impl<'a> IntoElements<'a> for Builder<'a> {
-    fn into_elements(self) -> Vec<Element<'a>> {
+impl IntoElements for Builder {
+    fn into_elements(self) -> Vec<Element> {
         vec![self.into()]
     }
 }
 
-impl<'a> IntoElements<'a> for Vec<Builder<'a>> {
-    fn into_elements(self) -> Vec<Element<'a>> {
+impl IntoElements for Vec<Builder> {
+    fn into_elements(self) -> Vec<Element> {
         self.into_iter().map(Element::from).collect()
     }
 }
 
-impl<'a, const N: usize> IntoElements<'a> for [Builder<'a>; N] {
-    fn into_elements(self) -> Vec<Element<'a>> {
+impl<const N: usize> IntoElements for [Builder; N] {
+    fn into_elements(self) -> Vec<Element> {
         self.into_iter().map(Element::from).collect()
     }
 }

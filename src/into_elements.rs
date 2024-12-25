@@ -5,38 +5,29 @@ pub trait IntoElements {
     fn into_elements(self) -> Vec<Element>;
 }
 
-impl IntoElements for Element {
+impl<E> IntoElements for E
+where
+    E: Into<Element>,
+{
     fn into_elements(self) -> Vec<Element> {
-        vec![self]
+        vec![self.into()]
     }
 }
 
-impl IntoElements for String {
+impl<E> IntoElements for Vec<E>
+where
+    E: Into<Element>,
+{
     fn into_elements(self) -> Vec<Element> {
-        vec![crate::declare::text(self)]
+        self.into_iter().map(Into::into).collect()
     }
 }
 
-impl IntoElements for &str {
+impl<const N: usize, E> IntoElements for [E; N]
+where
+    E: Into<Element>,
+{
     fn into_elements(self) -> Vec<Element> {
-        vec![crate::declare::text(self)]
-    }
-}
-
-impl IntoElements for &String {
-    fn into_elements(self) -> Vec<Element> {
-        vec![crate::declare::text(self)]
-    }
-}
-
-impl IntoElements for Vec<Element> {
-    fn into_elements(self) -> Vec<Element> {
-        self
-    }
-}
-
-impl<const N: usize> IntoElements for [Element; N] {
-    fn into_elements(self) -> Vec<Element> {
-        self.into_iter().collect()
+        self.into_iter().map(Into::into).collect()
     }
 }

@@ -1,5 +1,6 @@
 use crate::{
     attr::{Attr, Attrs},
+    declare,
     into_elements::IntoElements,
 };
 
@@ -125,5 +126,35 @@ impl Element {
             Element::Document { children: _ } => None,
             Element::Nothing => None,
         }
+    }
+}
+
+impl From<()> for Element {
+    fn from(_value: ()) -> Self {
+        Element::Nothing
+    }
+}
+
+impl From<String> for Element {
+    fn from(value: String) -> Self {
+        declare::text(value)
+    }
+}
+
+impl From<&str> for Element {
+    fn from(value: &str) -> Self {
+        declare::text(value)
+    }
+}
+
+impl From<&String> for Element {
+    fn from(value: &String) -> Self {
+        declare::text(value)
+    }
+}
+
+impl From<Option<Element>> for Element {
+    fn from(value: Option<Element>) -> Self {
+        value.unwrap_or(Element::Nothing)
     }
 }

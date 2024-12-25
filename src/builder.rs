@@ -178,21 +178,3 @@ impl From<Element> for Builder {
         }
     }
 }
-
-impl IntoElements for Builder {
-    fn into_elements(self) -> Vec<Element> {
-        vec![self.into()]
-    }
-}
-
-impl IntoElements for Vec<Builder> {
-    fn into_elements(self) -> Vec<Element> {
-        self.into_iter().map(Element::from).collect()
-    }
-}
-
-impl<const N: usize> IntoElements for [Builder; N] {
-    fn into_elements(self) -> Vec<Element> {
-        self.into_iter().map(Element::from).collect()
-    }
-}

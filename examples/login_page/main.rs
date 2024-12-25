@@ -44,7 +44,7 @@ fn login(errors: FormErrors, credentials: Credentials) -> Element {
     let errors_fragment = |errors: &FormErrors, path| {
         let mut fragment = fragment();
         for message in errors.filter(path) {
-            fragment = fragment.with([p(class("text-red-700")).with(text(message))]);
+            fragment = fragment.with([p(class("text-red-700")).with(message)]);
         }
 
         fragment

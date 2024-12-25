@@ -11,6 +11,12 @@ impl IntoElements for Element {
     }
 }
 
+impl IntoElements for String {
+    fn into_elements(self) -> Vec<Element> {
+        vec![crate::declare::text(self)]
+    }
+}
+
 impl IntoElements for Vec<Element> {
     fn into_elements(self) -> Vec<Element> {
         self

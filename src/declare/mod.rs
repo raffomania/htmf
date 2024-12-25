@@ -10,17 +10,11 @@ use crate::{
 pub use crate::builder::Builder;
 pub use all_attrs::*;
 pub use all_tags::*;
-#[cfg(feature = "unstable-builder")]
-pub use builder::*;
 
 #[cfg(feature = "unstable-builder")]
 mod builder {
-    use crate::builder::{Builder, Path};
-    use crate::{
-        attr::{Attr, Attrs},
-        element::Element,
-    };
-    use std::borrow::Cow;
+    use crate::builder::Builder;
+    use crate::element::Element;
 
     impl Builder {
         pub fn text<C>(self, value: C) -> Builder

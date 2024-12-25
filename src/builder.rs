@@ -33,17 +33,6 @@ pub struct Builder {
 }
 
 impl Builder {
-    pub fn new_tag(tag: &'static str, attrs: Attrs) -> Builder {
-        Builder {
-            element: Element::Tag {
-                children: Vec::new(),
-                tag,
-                attrs,
-            },
-            parent: Path::Top,
-        }
-    }
-
     pub fn with<C>(mut self, new_children: C) -> Builder
     where
         C: IntoElements,

@@ -1,24 +1,24 @@
 use crate::element::Element;
 
 /// Used for arguments that accept an arbitrary, ordered collection of elements.
-pub trait IntoElements<'a> {
-    fn into_elements(self) -> Vec<Element<'a>>;
+pub trait IntoElements {
+    fn into_elements(self) -> Vec<Element>;
 }
 
-impl<'a> IntoElements<'a> for Element<'a> {
-    fn into_elements(self) -> Vec<Element<'a>> {
+impl IntoElements for Element {
+    fn into_elements(self) -> Vec<Element> {
         vec![self]
     }
 }
 
-impl<'a> IntoElements<'a> for Vec<Element<'a>> {
-    fn into_elements(self) -> Vec<Element<'a>> {
+impl IntoElements for Vec<Element> {
+    fn into_elements(self) -> Vec<Element> {
         self
     }
 }
 
-impl<'a, const N: usize> IntoElements<'a> for [Element<'a>; N] {
-    fn into_elements(self) -> Vec<Element<'a>> {
+impl<const N: usize> IntoElements for [Element; N] {
+    fn into_elements(self) -> Vec<Element> {
         self.into_iter().collect()
     }
 }

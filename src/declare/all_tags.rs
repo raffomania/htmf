@@ -9,13 +9,13 @@ use crate::element::Element;
 #[cfg(feature = "unstable-builder")]
 macro_rules! define_tag_function {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Builder<'a> {
+        pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Builder {
             Builder::new_tag(stringify!($tag), value.into_attrs())
         }
     };
 
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Builder<'a> {
+        pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Builder {
             Builder::new_tag($tag_str, value.into_attrs())
         }
     };
@@ -24,7 +24,7 @@ macro_rules! define_tag_function {
 #[cfg(not(feature = "unstable-builder"))]
 macro_rules! define_tag_function {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Element<'a> {
+        pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Element {
             Element::Tag {
                 tag: stringify!($tag),
                 attrs: value.into_attrs(),
@@ -34,7 +34,7 @@ macro_rules! define_tag_function {
     };
 
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag<'a, Attrs: IntoAttrs<'a>>(value: Attrs) -> Element<'a> {
+        pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Element {
             Element::Tag {
                 tag: $tag_str,
                 attrs: value.into_attrs(),
@@ -47,19 +47,19 @@ macro_rules! define_tag_function {
 #[cfg(feature = "unstable-builder")]
 macro_rules! define_tag_builder_method {
     ($tag:ident $(, leaf)*) => {
-        pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
+        pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
             self.into_new_child_tag(stringify!($tag), value.into_attrs())
         }
     };
     ($tag:ident, $tag_str:literal) => {
-        pub fn $tag<Attrs: IntoAttrs<'element>>(self, value: Attrs) -> Builder<'element> {
+        pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
             self.into_new_child_tag($tag_str, value.into_attrs())
         }
     };
 }
 
 #[cfg(feature = "unstable-builder")]
-impl<'element> Builder<'element> {
+impl Builder {
     define_tag_builder_method!(a);
     define_tag_builder_method!(abbr);
     define_tag_builder_method!(address);

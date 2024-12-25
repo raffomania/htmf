@@ -1,30 +1,28 @@
-use std::borrow::Cow;
-
 use crate::{
     attr::{Attr, Attrs},
     into_elements::IntoElements,
 };
 
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub enum Element<'e> {
+pub enum Element {
     Tag {
-        children: Vec<Element<'e>>,
+        children: Vec<Element>,
         tag: &'static str,
-        attrs: Attrs<'e>,
+        attrs: Attrs,
     },
     Fragment {
-        children: Vec<Element<'e>>,
+        children: Vec<Element>,
     },
     Document {
-        children: Vec<Element<'e>>,
+        children: Vec<Element>,
     },
     Text {
-        text: Cow<'e, str>,
+        text: String,
     },
 }
 
-impl<'e> Element<'e> {
-    pub fn to_html(&'e self) -> String {
+impl Element {
+    pub fn to_html(&self) -> String {
         match self {
             Element::Tag {
                 children,
@@ -54,7 +52,7 @@ impl<'e> Element<'e> {
 
     pub fn with<C>(mut self, new_children: C) -> Self
     where
-        C: IntoElements<'e>,
+        C: IntoElements,
     {
         let mut new_children = new_children.into_elements();
         if let Some(children) = self.children_mut() {
@@ -65,7 +63,7 @@ impl<'e> Element<'e> {
 
     pub fn attr<C>(mut self, name: &'static str, value: C) -> Self
     where
-        C: Into<Cow<'e, str>>,
+        C: Into<String>,
     {
         if let Some(attrs) = self.attrs_mut() {
             attrs.push(Attr(name, value.into()));
@@ -73,7 +71,7 @@ impl<'e> Element<'e> {
         self
     }
 
-    fn children_html(children: &[Element<'e>], indent: bool) -> String {
+    fn children_html(children: &[Element], indent: bool) -> String {
         let mut children_html = if !children.is_empty() { "\n" } else { "" }.to_string();
         children_html.push_str(
             &children
@@ -95,7 +93,7 @@ impl<'e> Element<'e> {
         children_html
     }
 
-    pub(crate) fn children_mut(&mut self) -> Option<&mut Vec<Element<'e>>> {
+    pub(crate) fn children_mut(&mut self) -> Option<&mut Vec<Element>> {
         match self {
             Element::Tag {
                 children,
@@ -108,7 +106,7 @@ impl<'e> Element<'e> {
         }
     }
 
-    pub(crate) fn attrs_mut(&mut self) -> Option<&mut Vec<Attr<'e>>> {
+    pub(crate) fn attrs_mut(&mut self) -> Option<&mut Vec<Attr>> {
         match self {
             Element::Tag {
                 children: _,

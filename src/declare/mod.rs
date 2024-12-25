@@ -1,8 +1,6 @@
 mod all_attrs;
 mod all_tags;
 
-use std::borrow::Cow;
-
 use crate::{
     attr::{Attr, Attrs},
     element::Element,
@@ -24,39 +22,39 @@ mod builder {
     };
     use std::borrow::Cow;
 
-    impl<'e> Builder<'e> {
-        pub fn text<C>(self, value: C) -> Builder<'e>
+    impl Builder {
+        pub fn text<C>(self, value: C) -> Builder
         where
-            C: Into<Cow<'e, str>>,
+            C: Into<String>,
         {
             self.into_new_child_element(Element::Text { text: value.into() })
         }
     }
 }
 
-pub fn text<'e, C>(value: C) -> Element<'e>
+pub fn text<C>(value: C) -> Element
 where
-    C: Into<Cow<'e, str>>,
+    C: Into<String>,
 {
     Element::Text { text: value.into() }
 }
 
 /// Prepend `<!doctype html>` to the given children.
-pub fn document<'e>() -> Element<'e> {
+pub fn document() -> Element {
     Element::Document {
         children: Vec::new(),
     }
 }
 
-pub fn fragment<'e>() -> Element<'e> {
+pub fn fragment() -> Element {
     Element::Fragment {
         children: Vec::new(),
     }
 }
 
-pub fn attr<'a, C>(name: &'static str, value: C) -> Attrs<'a>
+pub fn attr<C>(name: &'static str, value: C) -> Attrs
 where
-    C: Into<Cow<'a, str>>,
+    C: Into<String>,
 {
     Attrs(vec![Attr(name, value.into())])
 }

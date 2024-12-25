@@ -40,7 +40,7 @@ fn base(children: Vec<Element>) -> Element {
     ])
 }
 
-fn login(errors: FormErrors, credentials: Credentials) -> Element<'static> {
+fn login(errors: FormErrors, credentials: Credentials) -> Element {
     let errors_fragment = |errors: &FormErrors, path| {
         let mut fragment = fragment();
         for message in errors.filter(path) {

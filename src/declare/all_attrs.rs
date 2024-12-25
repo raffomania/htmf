@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use crate::attr::Attr;
 use crate::attr::Attrs;
 
@@ -7,15 +5,15 @@ use crate::attr::Attrs;
 // to disable rust analyzer inlay hints
 macro_rules! define_attr_function {
     ($name:ident, $key:literal) => {
-        pub fn $name<'a, C>(value: C) -> Attrs<'a>
+        pub fn $name<C>(value: C) -> Attrs
         where
-            C: Into<Cow<'a, str>>,
+            C: Into<String>,
         {
             Attrs(vec![Attr($key, value.into())])
         }
     };
     ($name:ident, $key:literal, $value:literal) => {
-        pub fn $name<'a>() -> Attrs<'a> {
+        pub fn $name() -> Attrs {
             Attrs(vec![Attr($key, $value.into())])
         }
     };
@@ -23,23 +21,23 @@ macro_rules! define_attr_function {
 
 macro_rules! define_attr_attrs_method {
     ($name:ident, $key: literal) => {
-        pub fn $name<C>(mut self, value: C) -> Attrs<'a>
+        pub fn $name<C>(mut self, value: C) -> Attrs
         where
-            C: Into<Cow<'a, str>>,
+            C: Into<String>,
         {
             self.0.push(Attr($key, value.into()));
             self
         }
     };
     ($name:ident, $key: literal, $value:literal) => {
-        pub fn $name<C>(mut self) -> Attrs<'a> {
+        pub fn $name<C>(mut self) -> Attrs {
             self.0.push(Attr($key, $value.into()));
             self
         }
     };
 }
 
-impl<'a> Attrs<'a> {
+impl Attrs {
     define_attr_attrs_method!(accept, "accept");
     define_attr_attrs_method!(accept_charset, "accept_charset");
     define_attr_attrs_method!(action, "action");

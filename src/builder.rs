@@ -178,3 +178,32 @@ impl From<Element> for Builder {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+
+    #[test]
+    fn base() {
+        let doc = document().with([html(class("w-full h-full")).with([
+            head([]).with([meta(name("color-scheme").content("dark"))]),
+            body(class("w-full h-full text-gray-200 bg-neutral-800")).with(
+                main_(class("sm:overflow-y-auto sm:grow"))
+                    .with([p([]).with("My cool content"), aside(id("nav"))]),
+            ),
+        ])]);
+        let html = doc.clone().to_html();
+        use pretty_assertions::assert_eq;
+
+        let doc_builder = document()
+            .html(class("w-full h-full"))
+            .with([head([]).with([meta(name("color-scheme").content("dark"))])])
+            .body(class("w-full h-full text-gray-200 bg-neutral-800"))
+            .main_(class("sm:overflow-y-auto sm:grow"))
+            .with([p([]).with("My cool content"), aside(id("nav"))])
+            .into_root_element();
+        let builder_html = doc_builder.to_html();
+        assert_eq!(html, builder_html);
+        assert_eq!(doc, doc_builder);
+    }
+}

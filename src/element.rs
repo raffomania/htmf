@@ -159,3 +159,15 @@ impl From<Option<Element>> for Element {
         value.unwrap_or(Element::Nothing)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+
+    #[test]
+    fn nothing_element() {
+        assert_eq!(nothing().to_html(), "");
+        let doc = body([]).with(nothing());
+        assert_eq!(doc.to_html(), body([]).to_html());
+    }
+}

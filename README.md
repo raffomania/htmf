@@ -36,3 +36,9 @@ a(
 - 🦀 [html-builder](https://github.com/asayers/html-builder) uses the `writeln!` macro to build HTML in a string buffer
 - 🦀 [build_html](https://github.com/skubalj/build_html) has a slightly more verbose API than this crate, and uses the builder pattern
 - [leptos' view builder](https://book.leptos.dev/view/builder.html#no-macros-the-view-builder-syntax) has heavily inspired the API of this crate, but has a much wider scope than just rendering HTML
+
+## Development Setup
+
+For benchmarks, install `cargo-criterion`, e.g. using `cargo install cargo criterion`.
+
+For working on the examples, install a nightly rust toolchain to use the unstable `format_strings` rustfmt option.

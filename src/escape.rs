@@ -1,4 +1,4 @@
-pub fn write_escaped_html<W>(mut writer: W, input: &str)
+pub fn write_escaped_html<W>(writer: &mut W, input: &str)
 where
     W: std::fmt::Write,
 {

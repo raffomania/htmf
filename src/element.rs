@@ -1,4 +1,4 @@
-use std::fmt::Write;
+use std::fmt::{Debug, Write};
 
 use crate::{
     attr::{Attr, Attrs},
@@ -27,50 +27,7 @@ pub enum Element {
 
 impl Element {
     pub fn to_html(&self) -> String {
-        match self {
-            Element::Tag {
-                children,
-                tag,
-                attrs,
-            } => {
-                let attrs_space = if !attrs.0.is_empty() { " " } else { "" };
-                let attrs_html: String = attrs
-                    .0
-                    .iter()
-                    .map(
-                        #[allow(unused_must_use)]
-                        |Attr(k, v)| {
-                            let mut result = String::new();
-                            escape::write_escaped_html(&mut result, k);
-                            result.write_char('=');
-                            result.write_char('"');
-                            escape::write_escaped_html(&mut result, v);
-                            result.write_char('"');
-                            result
-                        },
-                    )
-                    .collect::<Vec<_>>()
-                    .join(" ");
-
-                let children_html = Self::children_html(children, true);
-
-                let mut escaped_tag = String::new();
-                escape::write_escaped_html(&mut escaped_tag, tag);
-
-                format!("<{escaped_tag}{attrs_space}{attrs_html}>{children_html}</{escaped_tag}>")
-            }
-            Element::Fragment { children } => Self::children_html(children, false),
-            Element::Text { text } => {
-                let mut res = String::new();
-                escape::write_escaped_html(&mut res, text);
-                res
-            }
-            Element::Document { children } => {
-                let children_html = Self::children_html(children, false);
-                format!("<!doctype html>\n{children_html}")
-            }
-            Element::Nothing => "".to_string(),
-        }
+        self.to_string()
     }
 
     pub fn with<C>(mut self, new_children: C) -> Self
@@ -94,31 +51,72 @@ impl Element {
         self
     }
 
-    fn children_html(children_with_empty: &[Element], indent: bool) -> String {
-        let children_html = children_with_empty
+    fn write_html(&self, f: &mut std::fmt::Formatter<'_>, indent: usize) -> std::fmt::Result {
+        match self {
+            Element::Tag {
+                children,
+                tag,
+                attrs,
+            } => {
+                f.write_char('<')?;
+                escape::write_escaped_html(f, tag);
+
+                if !attrs.0.is_empty() {
+                    f.write_char(' ')?
+                };
+
+                std::fmt::Display::fmt(attrs, f)?;
+
+                f.write_char('>')?;
+
+                Self::write_children_html(f, children, indent + 1)?;
+
+                f.write_char('<')?;
+                f.write_char('/')?;
+                escape::write_escaped_html(f, tag);
+                f.write_char('>')?;
+            }
+            Element::Fragment { children } => {
+                Self::write_children_html(f, children, indent)?;
+            }
+            Element::Text { text } => {
+                escape::write_escaped_html(f, text);
+            }
+            Element::Document { children } => {
+                f.write_str("<!doctype html>\n")?;
+                Self::write_children_html(f, children, indent)?;
+            }
+            Element::Nothing => {}
+        };
+
+        std::fmt::Result::Ok(())
+    }
+
+    fn write_children_html(
+        f: &mut std::fmt::Formatter<'_>,
+        children_with_empty: &[Element],
+        indent: usize,
+    ) -> std::fmt::Result {
+        let children = children_with_empty
             .iter()
-            .filter(|c| !matches!(c, Element::Nothing))
-            .map(Element::to_html)
-            .collect::<Vec<_>>()
-            // TODO don't add newlines to text children
-            .join("\n");
+            .filter(|c| !matches!(c, Element::Nothing));
 
-        // If there are any children, give each of them their own line.
-        let mut result = if !children_html.is_empty() { "\n" } else { "" }.to_string();
+        let mut children_exist = false;
 
-        result.push_str(&children_html);
-
-        if indent {
-            // Indent all children
-            result = result.replace("\n", "\n    ");
+        for child in children {
+            children_exist = true;
+            f.write_char('\n')?;
+            f.write_str(&" ".repeat(indent * 4))?;
+            child.write_html(f, indent)?;
         }
 
         // If there are any children, make sure the closing tag is on its own line.
-        if !children_html.is_empty() {
-            result.push('\n');
+        if children_exist {
+            f.write_char('\n')?;
+            f.write_str(&" ".repeat(indent.saturating_sub(1) * 4))?;
         }
 
-        result
+        std::fmt::Result::Ok(())
     }
 
     pub(crate) fn children_mut(&mut self) -> Option<&mut Vec<Element>> {
@@ -147,6 +145,12 @@ impl Element {
             Element::Document { children: _ } => None,
             Element::Nothing => None,
         }
+    }
+}
+
+impl std::fmt::Display for Element {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.write_html(f, 0)
     }
 }
 

@@ -30,7 +30,7 @@ fn run(c: &mut Criterion) {
     group.bench_function("deep", |b| {
         b.iter(|| {
             let mut elem = div([]);
-            for _ in 0..100 {
+            for _ in 0..10_000 {
                 elem = div([]).with(elem);
             }
             html([]).with(body([]).with(elem)).to_html();

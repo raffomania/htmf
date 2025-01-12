@@ -51,7 +51,7 @@ impl Element {
         self
     }
 
-    fn write_html(&self, f: &mut std::fmt::Formatter<'_>, indent: usize) -> std::fmt::Result {
+    pub fn write_html(&self, f: &mut std::fmt::Formatter<'_>, indent: usize) -> std::fmt::Result {
         match self {
             Element::Tag {
                 children,

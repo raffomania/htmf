@@ -1,6 +1,7 @@
 ---
 source: src/lib.rs
-expression: html_immutable
+expression: html
+snapshot_kind: text
 ---
 <!doctype html>
 
@@ -12,5 +13,9 @@ expression: html_immutable
         <meta name="color-scheme" content="dark"></meta>
         <meta name="viewport" content="width=device-width,initial-scale=1"></meta>
     </head>
-    <body class="w-full h-full text-gray-200 bg-neutral-800"></body>
+    <body class="w-full h-full text-gray-200 bg-neutral-800">
+        <p>
+            bonjour
+        </p>
+    </body>
 </html>

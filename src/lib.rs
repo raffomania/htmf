@@ -23,7 +23,8 @@ mod tests {
                 meta(name("color-scheme").content("dark")),
                 meta(name("viewport").content("width=device-width,initial-scale=1")),
             ]),
-            body(class("w-full h-full text-gray-200 bg-neutral-800")),
+            body(class("w-full h-full text-gray-200 bg-neutral-800"))
+                .with([nothing(), p([]).with(text("bonjour"))]),
         ])]);
         let html = doc.clone().to_html();
         insta::assert_snapshot!(html);

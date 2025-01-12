@@ -1,6 +1,8 @@
+use std::fmt::Write;
+
 use crate::{
     attr::{Attr, Attrs},
-    declare,
+    declare, escape,
     into_elements::IntoElements,
 };
 
@@ -35,16 +37,34 @@ impl Element {
                 let attrs_html: String = attrs
                     .0
                     .iter()
-                    .map(|Attr(k, v)| format!(r#"{k}="{v}""#))
+                    .map(
+                        #[allow(unused_must_use)]
+                        |Attr(k, v)| {
+                            let mut result = String::new();
+                            escape::write_escaped_html(&mut result, k);
+                            result.write_char('=');
+                            result.write_char('"');
+                            escape::write_escaped_html(&mut result, v);
+                            result.write_char('"');
+                            result
+                        },
+                    )
                     .collect::<Vec<_>>()
                     .join(" ");
 
                 let children_html = Self::children_html(children, true);
 
-                format!("<{tag}{attrs_space}{attrs_html}>{children_html}</{tag}>")
+                let mut escaped_tag = String::new();
+                escape::write_escaped_html(&mut escaped_tag, tag);
+
+                format!("<{escaped_tag}{attrs_space}{attrs_html}>{children_html}</{escaped_tag}>")
             }
             Element::Fragment { children } => Self::children_html(children, false),
-            Element::Text { text } => text.to_string(),
+            Element::Text { text } => {
+                let mut res = String::new();
+                escape::write_escaped_html(&mut res, text);
+                res
+            }
             Element::Document { children } => {
                 let children_html = Self::children_html(children, false);
                 format!("<!doctype html>\n{children_html}")

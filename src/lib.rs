@@ -3,6 +3,7 @@ pub mod attr;
 pub mod builder;
 pub mod declare;
 pub mod element;
+mod escape;
 pub mod into_elements;
 pub mod prelude;
 

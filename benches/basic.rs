@@ -1,12 +1,8 @@
-use std::time::Duration;
-
 use criterion::{criterion_group, criterion_main, Criterion};
 use htmf::declare::*;
 
 fn run(c: &mut Criterion) {
     let mut group = c.benchmark_group("run");
-    group.sample_size(10);
-    group.warm_up_time(Duration::from_secs(1));
     group.bench_function("basic", |b| {
         b.iter(|| {
             html(class("w-full h-full"))
@@ -23,6 +19,24 @@ fn run(c: &mut Criterion) {
                 .to_html();
         });
     });
+
+    group.bench_function("wide", |b| {
+        b.iter(|| {
+            let children = (0..10_000).map(|_| div([])).collect::<Vec<_>>();
+            html([]).with(body([]).with(children)).to_html();
+        });
+    });
+
+    group.bench_function("deep", |b| {
+        b.iter(|| {
+            let mut elem = div([]);
+            for _ in 0..100 {
+                elem = div([]).with(elem);
+            }
+            html([]).with(body([]).with(elem)).to_html();
+        });
+    });
+
     #[cfg(feature = "unstable-builder")]
     group.bench_function("builder", |b| {
         b.iter(|| {

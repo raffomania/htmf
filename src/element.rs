@@ -51,69 +51,85 @@ impl Element {
         self
     }
 
-    pub fn write_html(&self, f: &mut std::fmt::Formatter<'_>, indent: usize) -> std::fmt::Result {
-        match self {
-            Element::Tag {
-                children,
-                tag,
-                attrs,
-            } => {
-                f.write_char('<')?;
-                escape::write_escaped_html(f, tag);
-
-                if !attrs.0.is_empty() {
-                    f.write_char(' ')?
-                };
-
-                std::fmt::Display::fmt(attrs, f)?;
-
-                f.write_char('>')?;
-
-                Self::write_children_html(f, children, indent + 1)?;
-
-                f.write_char('<')?;
-                f.write_char('/')?;
-                escape::write_escaped_html(f, tag);
-                f.write_char('>')?;
-            }
-            Element::Fragment { children } => {
-                Self::write_children_html(f, children, indent)?;
-            }
-            Element::Text { text } => {
-                escape::write_escaped_html(f, text);
-            }
-            Element::Document { children } => {
-                f.write_str("<!doctype html>\n")?;
-                Self::write_children_html(f, children, indent)?;
-            }
-            Element::Nothing => {}
-        };
-
-        std::fmt::Result::Ok(())
-    }
-
-    fn write_children_html(
-        f: &mut std::fmt::Formatter<'_>,
-        children_with_empty: &[Element],
-        indent: usize,
-    ) -> std::fmt::Result {
-        let children = children_with_empty
-            .iter()
-            .filter(|c| !matches!(c, Element::Nothing));
-
-        let mut children_exist = false;
-
-        for child in children {
-            children_exist = true;
-            f.write_char('\n')?;
-            f.write_str(&" ".repeat(indent * 4))?;
-            child.write_html(f, indent)?;
+    pub fn write_html(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        enum WriteTask<'e> {
+            VisitNode(&'e Element),
+            WriteClosingTag(&'e str),
+            WriteNewline,
         }
 
-        // If there are any children, make sure the closing tag is on its own line.
-        if children_exist {
-            f.write_char('\n')?;
-            f.write_str(&" ".repeat(indent.saturating_sub(1) * 4))?;
+        let mut stack = Vec::new();
+
+        stack.push((WriteTask::VisitNode(self), 0));
+
+        while let Some((task, indent)) = stack.pop() {
+            let element = match task {
+                WriteTask::VisitNode(element) => element,
+                WriteTask::WriteNewline => {
+                    f.write_char('\n')?;
+                    f.write_str(&" ".repeat(indent * 4))?;
+                    continue;
+                }
+                WriteTask::WriteClosingTag(tag) => {
+                    f.write_char('<')?;
+                    f.write_char('/')?;
+                    escape::write_escaped_html(f, tag);
+                    f.write_char('>')?;
+                    continue;
+                }
+            };
+
+            match element {
+                Element::Tag {
+                    children,
+                    tag,
+                    attrs,
+                } => {
+                    f.write_char('\n')?;
+                    f.write_str(&" ".repeat(indent * 4))?;
+                    f.write_char('<')?;
+                    escape::write_escaped_html(f, tag);
+
+                    if !attrs.0.is_empty() {
+                        f.write_char(' ')?;
+                    };
+
+                    std::fmt::Display::fmt(attrs, f)?;
+
+                    f.write_char('>')?;
+
+                    let children = children
+                        .iter()
+                        .filter(|c| !matches!(c, Element::Nothing))
+                        .rev();
+                    stack.push((WriteTask::WriteClosingTag(tag), 0));
+                    let mut ending_newline_written = false;
+                    for child in children {
+                        if !ending_newline_written {
+                            stack.push((WriteTask::WriteNewline, indent));
+                            ending_newline_written = true;
+                        }
+                        stack.push((WriteTask::VisitNode(child), indent + 1));
+                    }
+                }
+                Element::Fragment { children } => {
+                    for child in children.iter().rev() {
+                        stack.push((WriteTask::VisitNode(child), indent));
+                    }
+                }
+                Element::Text { text } => {
+                    f.write_char('\n')?;
+                    f.write_str(&" ".repeat(indent * 4))?;
+                    escape::write_escaped_html(f, text);
+                }
+                Element::Document { children } => {
+                    f.write_str("<!doctype html>\n")?;
+                    for child in children.iter().rev() {
+                        stack.push((WriteTask::VisitNode(child), indent));
+                    }
+                }
+                Element::Nothing => {}
+            };
         }
 
         std::fmt::Result::Ok(())
@@ -150,7 +166,7 @@ impl Element {
 
 impl std::fmt::Display for Element {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.write_html(f, 0)
+        self.write_html(f)
     }
 }
 

@@ -3,9 +3,11 @@ name = "htmf"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+authors = ["Rafael Epplée <hello@rafa.ee>"]
 description = "hypertext markup functions: functions for generating HTML"
 homepage = "https://github.com/raffomania/htmf"
 repository = "https://github.com/raffomania/htmf"
+keywords = ["html"]
 
 [features]
 default = []

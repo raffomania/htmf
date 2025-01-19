@@ -186,7 +186,7 @@ mod tests {
     #[test]
     fn base() {
         let doc = document().with([html(class("w-full h-full")).with([
-            head([]).with([meta(name("color-scheme").content("dark"))]),
+            head([]).with([meta([name("color-scheme"), content("dark")])]),
             body(class("w-full h-full text-gray-200 bg-neutral-800")).with(
                 main_(class("sm:overflow-y-auto sm:grow"))
                     .with([p([]).with("My cool content"), aside(id("nav"))]),
@@ -197,7 +197,7 @@ mod tests {
 
         let doc_builder = document()
             .html(class("w-full h-full"))
-            .with([head([]).with([meta(name("color-scheme").content("dark"))])])
+            .with([head([]).with([meta([name("color-scheme"), content("dark")])])])
             .body(class("w-full h-full text-gray-200 bg-neutral-800"))
             .main_(class("sm:overflow-y-auto sm:grow"))
             .with([p([]).with("My cool content"), aside(id("nav"))])

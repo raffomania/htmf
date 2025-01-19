@@ -8,17 +8,6 @@ pub struct Attr(pub(crate) &'static str, pub(crate) String);
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Attrs(pub(crate) Vec<Attr>);
 
-impl Attrs {
-    // TODO: remove this or put it behind an unstable feature
-    pub fn attr<C>(mut self, name: &'static str, value: C) -> Attrs
-    where
-        C: Into<String>,
-    {
-        self.0.push(Attr(name, value.into()));
-        self
-    }
-}
-
 impl std::fmt::Display for Attrs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for (i, Attr(k, v)) in self.0.iter().enumerate() {

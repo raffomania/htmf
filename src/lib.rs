@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 pub mod attr;
 #[cfg(feature = "unstable-builder")]
 pub mod builder;

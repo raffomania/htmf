@@ -9,6 +9,7 @@ pub struct Attr(pub(crate) &'static str, pub(crate) String);
 pub struct Attrs(pub(crate) Vec<Attr>);
 
 impl Attrs {
+    // TODO: remove this or put it behind an unstable feature
     pub fn attr<C>(mut self, name: &'static str, value: C) -> Attrs
     where
         C: Into<String>,
@@ -43,6 +44,12 @@ pub trait IntoAttrs {
 impl IntoAttrs for Attr {
     fn into_attrs(self) -> Attrs {
         Attrs(vec![self])
+    }
+}
+
+impl IntoAttrs for () {
+    fn into_attrs(self) -> Attrs {
+        Attrs(Vec::new())
     }
 }
 

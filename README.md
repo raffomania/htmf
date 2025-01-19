@@ -31,6 +31,54 @@ a([href("https://www.rafa.ee"), class("link")])
 
 Coming soon: ways to import htmf, defining attributes, defining contents, converting to html.
 
+After adding htmf to your dependencies, you can get started by declaring a document:
+
+```rust
+use htmf::prelude::*;
+
+document().with(html([]).with([
+    head([]).with([
+        meta([
+            name("viewport"), 
+            content("width=device-width,initial-scale=1")
+        ]),
+    ]), 
+    body([class("mx-auto mw-xl")])
+        .with(main_([]))
+]));
+```
+
+- htmf provides functions for creating any of the common HTML tags. Tag names conflicting with Rust keywords include a trailing `_` in their name (e.g. `main_`).
+- Add children using an element's `with` method. You can pass in arrays of elements, or a single element.
+- htmf provides functions to create any of the common HTML attributes. Pass the result to the tag functions directly.
+
+### Importing htmf explicitly
+
+If you prefer to avoid glob imports, you can import htmf modules explicitly:
+
+```rust
+use htmf::prelude as h;
+
+h::document();
+```
+
+### Defining Attributes
+
+Tag functions accept anything implementing the `IntoAttrs` trait:
+
+```rust
+use htmf::prelude::*;
+
+// Passing arrays
+p([class("prose")]);
+
+// Passing single attributes
+p(class("prose"));
+
+// Passing ()
+p(());
+```
+
 ## Tips for Working with htmf
 
 Coming soon: 2 space indents, structuring code, unstable multiline string formatting.

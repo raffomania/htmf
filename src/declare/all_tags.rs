@@ -1,4 +1,4 @@
-use crate::attr::IntoAttrs;
+use crate::into_attrs::IntoAttrs;
 
 #[cfg(feature = "unstable-builder")]
 use crate::builder::Builder;

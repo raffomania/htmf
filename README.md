@@ -62,6 +62,34 @@ use htmf::prelude as h;
 h::document();
 ```
 
+### Defining Elements
+
+The `with` method accepts anything implementing the `IntoElements` trait, including single items implementing `Into<Element>`:
+
+```rust
+use htmf::prelude::*;
+
+// Arrays
+ul([]).with([li([]), li([])]);
+
+// Single elements
+div([]).with(p([]));
+
+// Vectors
+ul([]).with(vec![li([]), li([])]);
+
+// Strings
+p([]).with("I'm a string!");
+p([]).with("I'm a string!".to_string());
+
+// ()
+div([]).with(());
+
+// Options
+div([]).with(Some(button([])));
+div([]).with(None);
+```
+
 ### Defining Attributes
 
 Tag functions accept anything implementing the `IntoAttrs` trait:
@@ -69,15 +97,21 @@ Tag functions accept anything implementing the `IntoAttrs` trait:
 ```rust
 use htmf::prelude::*;
 
-// Passing arrays
+// Arrays
 p([class("prose")]);
 
-// Passing single attributes
+// Single attributes
 p(class("prose"));
 
-// Passing ()
+// ()
 p(());
+
+// Options
+p(Some(class("prose")));
+p(None);
 ```
+
+### Custom Attributes
 
 ## Tips for Working with htmf
 

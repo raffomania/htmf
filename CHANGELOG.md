@@ -1,8 +1,10 @@
 <!-- next-header -->
 
+## [Unreleased] - ReleaseDate
+
 # Changelog
 
-## [Unreleased] - ReleaseDate
+## [0.2.0] - 2025-01-21
 
 ### Breaking Changes
 

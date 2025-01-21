@@ -14,3 +14,6 @@ lint *args:
 
 format:
     cargo +nightly fmt --all -- --check
+
+release *args:
+    cargo release {{args}}

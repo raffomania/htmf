@@ -1,6 +1,6 @@
 # hypertext markup functions
 
-⚠️ Warning: This is alpha-quality, completely insecure software.
+⚠️ Warning: This is beta-quality software. The API will undergo significant changes.
 
 Functions for generating HTML from Rust in a declarative fashion:
 

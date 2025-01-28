@@ -58,6 +58,8 @@ impl Element {
                 tag,
                 attrs,
             } => {
+                f.write_char('\n')?;
+                f.write_str(&" ".repeat(indent * 4))?;
                 f.write_char('<')?;
                 escape::write_escaped_html(f, tag);
 
@@ -71,6 +73,14 @@ impl Element {
 
                 Self::write_children_html(f, children, indent + 1)?;
 
+                // If there are any children, make sure the closing tag is on its own line.
+                let child_tags_exist = children
+                    .iter()
+                    .any(|c| matches!(c, Element::Tag { .. } | Element::Fragment { .. }));
+                if child_tags_exist {
+                    f.write_char('\n')?;
+                    f.write_str(&" ".repeat(indent * 4))?;
+                }
                 f.write_char('<')?;
                 f.write_char('/')?;
                 escape::write_escaped_html(f, tag);
@@ -89,7 +99,7 @@ impl Element {
             Element::Nothing => {}
         };
 
-        std::fmt::Result::Ok(())
+        Ok(())
     }
 
     fn write_children_html(
@@ -101,22 +111,11 @@ impl Element {
             .iter()
             .filter(|c| !matches!(c, Element::Nothing));
 
-        let mut children_exist = false;
-
         for child in children {
-            children_exist = true;
-            f.write_char('\n')?;
-            f.write_str(&" ".repeat(indent * 4))?;
             child.write_html(f, indent)?;
         }
 
-        // If there are any children, make sure the closing tag is on its own line.
-        if children_exist {
-            f.write_char('\n')?;
-            f.write_str(&" ".repeat(indent.saturating_sub(1) * 4))?;
-        }
-
-        std::fmt::Result::Ok(())
+        Ok(())
     }
 
     pub(crate) fn children_mut(&mut self) -> Option<&mut Vec<Element>> {

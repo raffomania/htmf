@@ -1,7 +1,6 @@
 ---
 source: src/lib.rs
 expression: html
-snapshot_kind: text
 ---
 <!doctype html>
 
@@ -14,8 +13,10 @@ snapshot_kind: text
         <meta name="viewport" content="width=device-width,initial-scale=1"></meta>
     </head>
     <body class="w-full h-full text-gray-200 bg-neutral-800">
-        <p>
-            bonjour
-        </p>
+        <p>bonjour</p>
+        <div>
+        </div>
+        <label class="mt-4 text-neutral-400" for="credentials[password]">Password</label>
+        <input type="password" name="credentials[password]" class="rounded py-1.5 px-3 mt-2 bg-neutral-900" required="true"></input>
     </body>
 </html>

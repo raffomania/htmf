@@ -29,8 +29,24 @@ mod tests {
                     content("width=device-width,initial-scale=1"),
                 ]),
             ]),
-            body(class("w-full h-full text-gray-200 bg-neutral-800"))
-                .with([nothing(), p([]).with(text("bonjour"))]),
+            body(class("w-full h-full text-gray-200 bg-neutral-800")).with([
+                nothing(),
+                p([]).with(text("bonjour")),
+                fragment().with([
+                    div([]).with(fragment()),
+                    label([
+                        class("mt-4 text-neutral-400"),
+                        for_("credentials[password]"),
+                    ])
+                    .with("Password"),
+                    input([
+                        type_("password"),
+                        name("credentials[password]"),
+                        class("rounded py-1.5 px-3 mt-2 bg-neutral-900"),
+                        required("true"),
+                    ]),
+                ]),
+            ]),
         ])]);
         let html = doc.clone().to_html();
         insta::assert_snapshot!(html);

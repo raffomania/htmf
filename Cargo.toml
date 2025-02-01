@@ -1,32 +1,15 @@
-[package]
-name = "htmf"
+[workspace.package]
 version = "0.2.0"
 edition = "2021"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 authors = ["Rafael Epplée <hello@rafa.ee>"]
-description = "hypertext markup functions: functions for generating HTML"
-homepage = "https://github.com/raffomania/htmf"
 repository = "https://github.com/raffomania/htmf"
-keywords = ["html"]
+homepage = "https://github.com/raffomania/htmf"
 
-[features]
-default = []
-unstable-builder = []
-
-[dependencies]
-
-[dev-dependencies]
-criterion = "0.5.1"
-insta = { version = "1.39.0", features = ["yaml"] }
-# For examples
-garde = { version = "0.20.0", default-features = false, features = ["derive"] }
-askama = { version = "0.12.1" }
-pretty_assertions = "1.4.0"
+[workspace]
+members = ["htmf"]
+resolver = "2"
 
 [profile.dev.package]
 insta.opt-level = 3
 similar.opt-level = 3
-
-[[bench]]
-name = "basic"
-harness = false

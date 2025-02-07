@@ -7,7 +7,7 @@ repository = "https://github.com/raffomania/htmf"
 homepage = "https://github.com/raffomania/htmf"
 
 [workspace]
-members = ["htmf"]
+members = [ "askama_to_htmf","htmf"]
 resolver = "2"
 
 [profile.dev.package]

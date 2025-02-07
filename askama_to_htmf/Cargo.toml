@@ -1,0 +1,17 @@
+[package]
+name = "askama_to_htmf"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+anyhow = "1.0.95"
+clap = { version = "4.5.28", features = ["derive"] }
+regex = "1.11.1"
+tl = "0.7.8"
+
+[dev-dependencies]
+insta = "1.42.1"

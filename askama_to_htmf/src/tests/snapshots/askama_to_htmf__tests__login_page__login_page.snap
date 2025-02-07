@@ -1,0 +1,27 @@
+---
+source: askama_to_htmf/src/tests/login_page.rs
+expression: converted
+---
+use htmf::prelude::*;
+
+pub fn view(data: &Data) -> Element {fragment().with([text("{% macro errors(errors, path) %} {% for message in errors.filter(path) %}"),
+p(class("text-red-700")).with("{{ message }}"),
+text(r#"{% endfor %} {% endmacro %} {% extends "_base.html" %} {% block body %}"#),
+form([action("/login"),class("flex flex-col justify-center flex-1 max-w-md min-h-full px-4 mx-auto"),attr("hx-boost", "true"),attr("hx-disabled-elt", "button"),method("post"),]).with([h1(class("text-2xl font-bold tracking-tight text-center")).with("Sign in to your account"),
+label([class("mt-10 text-neutral-400"),name("credentials[username]"),]).with([text("Username"),
+text(r#"{% call errors(errors, "credentials.username") %}"#),
+input([class("rounded py-1.5 px-3 mt-2 bg-neutral-900"),name("credentials[username]"),required(""),type_("text"),value("{{ credentials.username }}"),]),
+label([class("mt-4 text-neutral-400"),for_("credentials[password]"),]).with([text("Password"),
+text(r#"{% call errors(errors, "credentials.password") %}"#),
+input([class("rounded py-1.5 px-3 mt-2 bg-neutral-900"),name("credentials[password]"),required(""),type_("password"),]),
+text(r#"{% call errors(errors, "root") %}"#),
+button([class("leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"),type_("submit"),]).with([span(class("inline-block w-0 h-4")).with([span(class("block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator")),
+text("Sign in"),
+text("{% endblock %}"),
+]),
+]),
+]),
+]),
+]),
+])
+}

@@ -10,6 +10,11 @@ pub(crate) enum Path {
         parent: Box<Path>,
         right: Vec<Element>,
     },
+    LeafTag {
+        tag: &'static str,
+        attrs: Attrs,
+        parent: Box<Path>,
+    },
     Fragment {
         left: Vec<Element>,
         parent: Box<Path>,
@@ -71,6 +76,11 @@ impl Builder {
                 parent: Box::new(self.parent),
                 right: Vec::new(),
             },
+            Element::LeafTag { tag, attrs } => Path::LeafTag {
+                tag,
+                attrs,
+                parent: Box::new(self.parent),
+            },
             Element::Fragment { children } => Path::Fragment {
                 left: children,
                 parent: Box::new(self.parent),
@@ -81,7 +91,6 @@ impl Builder {
                 parent: Box::new(self.parent),
                 right: Vec::new(),
             },
-            // TODO make this impossible to reach
             Element::Text { .. } => return self,
             Element::Nothing => return self,
         };
@@ -112,6 +121,10 @@ impl Builder {
                     },
                 })
             }
+            Path::LeafTag { tag, attrs, parent } => Some(Builder {
+                parent: *parent,
+                element: Element::LeafTag { tag, attrs },
+            }),
             Path::Fragment {
                 left,
                 parent,
@@ -150,9 +163,10 @@ impl Builder {
     pub(crate) fn into_root_element(self) -> Element {
         match &self.parent {
             Path::Top => self.element,
-            Path::Tag { .. } | Path::Document { .. } | Path::Fragment { .. } => {
-                self.up().unwrap().into_root_element()
-            }
+            Path::Tag { .. }
+            | Path::LeafTag { .. }
+            | Path::Document { .. }
+            | Path::Fragment { .. } => self.up().unwrap().into_root_element(),
         }
     }
 

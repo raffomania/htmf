@@ -1,4 +1,4 @@
 {
-    "rust-analyzer.cargo.features": [],
-    "rust-analyzer.check.features": []
+    "rust-analyzer.cargo.features": ["unstable-builder"],
+    "rust-analyzer.check.features": ["unstable-builder"]
 }

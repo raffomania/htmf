@@ -13,6 +13,10 @@ pub enum Element {
         tag: &'static str,
         attrs: Attrs,
     },
+    LeafTag {
+        tag: &'static str,
+        attrs: Attrs,
+    },
     Fragment {
         children: Vec<Element>,
     },
@@ -86,6 +90,21 @@ impl Element {
                 escape::write_escaped_html(f, tag);
                 f.write_char('>')?;
             }
+            Element::LeafTag { tag, attrs } => {
+                f.write_char('\n')?;
+                f.write_str(&" ".repeat(indent * 4))?;
+                f.write_char('<')?;
+                escape::write_escaped_html(f, tag);
+
+                if !attrs.0.is_empty() {
+                    f.write_char(' ')?
+                };
+
+                std::fmt::Display::fmt(attrs, f)?;
+
+                f.write_char('/')?;
+                f.write_char('>')?;
+            }
             Element::Fragment { children } => {
                 Self::write_children_html(f, children, indent)?;
             }
@@ -129,6 +148,7 @@ impl Element {
             Element::Fragment { children } => Some(children),
             Element::Document { children } => Some(children),
             Element::Nothing => None,
+            Element::LeafTag { .. } => None,
         }
     }
 
@@ -143,6 +163,7 @@ impl Element {
             Element::Fragment { children: _ } => None,
             Element::Document { children: _ } => None,
             Element::Nothing => None,
+            Element::LeafTag { attrs, .. } => Some(&mut attrs.0),
         }
     }
 }

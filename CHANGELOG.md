@@ -2,6 +2,10 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Breaking Changes
+
+- Don't render a closing tag for [void elements](https://developer.mozilla.org/en-US/docs/Glossary/Void_element).
+
 # Changelog
 
 ## [0.2.0] - 2025-01-21

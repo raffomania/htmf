@@ -6,12 +6,21 @@ use crate::builder::Builder;
 use crate::element::Element;
 
 macro_rules! define_tag_function {
-    ($tag:ident $(, leaf)*) => {
+    ($tag:ident) => {
         pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Element {
             Element::Tag {
                 tag: stringify!($tag),
                 attrs: value.into_attrs(),
                 children: Vec::new(),
+            }
+        }
+    };
+
+    ($tag:ident, leaf) => {
+        pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Element {
+            Element::LeafTag {
+                tag: stringify!($tag),
+                attrs: value.into_attrs(),
             }
         }
     };
@@ -25,32 +34,79 @@ macro_rules! define_tag_function {
             }
         }
     };
+
+    ($tag:ident, $tag_str:literal, leaf) => {
+        pub fn $tag<Attrs: IntoAttrs>(value: Attrs) -> Element {
+            Element::LeafTag {
+                tag: $tag_str,
+                attrs: value.into_attrs(),
+            }
+        }
+    };
 }
 
 #[cfg(feature = "unstable-builder")]
 macro_rules! define_tag_builder_method {
-    ($tag:ident $(, leaf)*) => {
+    ($tag:ident) => {
         pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
             self.into_new_child_tag(stringify!($tag), value.into_attrs())
         }
     };
+
+    ($tag:ident, leaf) => {
+        pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
+            self.into_new_child_element(Element::LeafTag {
+                tag: stringify!($tag),
+                attrs: value.into_attrs(),
+            })
+        }
+    };
+
     ($tag:ident, $tag_str:literal) => {
         pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
             self.into_new_child_tag($tag_str, value.into_attrs())
+        }
+    };
+
+    ($tag:ident, $tag_str:literal, leaf) => {
+        pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
+            self.into_new_child_element(Element::LeafTag {
+                tag: $tag_str,
+                attrs: value.into_attrs(),
+            })
         }
     };
 }
 
 #[cfg(feature = "unstable-builder")]
 macro_rules! define_tag_element_method {
-    ($tag:ident $(, leaf)*) => {
+    ($tag:ident) => {
         pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
             Builder::from(self).into_new_child_tag(stringify!($tag), value.into_attrs())
         }
     };
+
+    ($tag:ident, leaf) => {
+        pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
+            Builder::from(self).into_new_child_element(Element::LeafTag {
+                tag: stringify!($tag),
+                attrs: value.into_attrs(),
+            })
+        }
+    };
+
     ($tag:ident, $tag_str:literal) => {
         pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
             Builder::from(self).into_new_child_tag($tag_str, value.into_attrs())
+        }
+    };
+
+    ($tag:ident, $tag_str:literal, leaf) => {
+        pub fn $tag<Attrs: IntoAttrs>(self, value: Attrs) -> Builder {
+            Builder::from(self).into_new_child_element(Element::LeafTag {
+                tag: $tag_str,
+                attrs: value.into_attrs(),
+            })
         }
     };
 }

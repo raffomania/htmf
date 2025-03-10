@@ -26,9 +26,9 @@ jobs:
       - name: Setup rust cache
         uses: Swatinem/rust-cache@v2
 
-      - run: cargo test
+      - run: cargo test --features pretty-print
 
-      - run: cargo test --features unstable-builder
+      - run: cargo test --features pretty-print,unstable-builder
 
       - run: cargo build --release
 

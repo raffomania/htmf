@@ -11,8 +11,10 @@ keywords = ["html"]
 [features]
 default = []
 unstable-builder = []
+pretty-print = ["dep:markup_fmt"]
 
 [dependencies]
+markup_fmt = { version = "0.19.0", optional = true }
 
 [dev-dependencies]
 criterion = "0.5.1"

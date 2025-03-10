@@ -48,7 +48,7 @@ mod tests {
                 ]),
             ]),
         ])]);
-        let html = doc.clone().to_html();
+        let html = doc.clone().to_html_pretty().unwrap();
         insta::assert_snapshot!(html);
     }
 }

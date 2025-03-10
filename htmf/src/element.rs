@@ -34,6 +34,23 @@ impl Element {
         self.to_string()
     }
 
+    #[cfg(feature = "pretty-print")]
+    pub fn to_html_pretty(
+        &self,
+    ) -> Result<String, markup_fmt::FormatError<std::convert::Infallible>> {
+        let raw = self.to_html();
+        markup_fmt::format_text(
+            &raw,
+            markup_fmt::Language::Html,
+            &markup_fmt::config::FormatOptions::default(),
+            |code, _| Ok::<_, std::convert::Infallible>(code.into()),
+        )
+        .inspect_err(|e| {
+            println!("{raw}");
+            println!("{e}");
+        })
+    }
+
     pub fn with<C>(mut self, new_children: C) -> Self
     where
         C: IntoElements,
@@ -62,7 +79,6 @@ impl Element {
                 tag,
                 attrs,
             } => {
-                f.write_char('\n')?;
                 f.write_str(&" ".repeat(indent * 4))?;
                 f.write_char('<')?;
                 escape::write_escaped_html(f, tag);
@@ -77,14 +93,6 @@ impl Element {
 
                 Self::write_children_html(f, children, indent + 1)?;
 
-                // If there are any children, make sure the closing tag is on its own line.
-                let child_tags_exist = children
-                    .iter()
-                    .any(|c| matches!(c, Element::Tag { .. } | Element::Fragment { .. }));
-                if child_tags_exist {
-                    f.write_char('\n')?;
-                    f.write_str(&" ".repeat(indent * 4))?;
-                }
                 f.write_char('<')?;
                 f.write_char('/')?;
                 escape::write_escaped_html(f, tag);
@@ -112,7 +120,7 @@ impl Element {
                 escape::write_escaped_html(f, text);
             }
             Element::Document { children } => {
-                f.write_str("<!doctype html>\n")?;
+                f.write_str("<!doctype html>")?;
                 Self::write_children_html(f, children, indent)?;
             }
             Element::Nothing => {}

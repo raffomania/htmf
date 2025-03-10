@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+- Output unformatted HTML (without newlines or indentation) by default. Add the "pretty-print" feature along with a new method, `to_html_pretty`, for opt-in formatted HTML output.
 - Don't render a closing tag for [void elements](https://developer.mozilla.org/en-US/docs/Glossary/Void_element).
 
 # Changelog

@@ -1,9 +1,9 @@
 test *FLAGS: 
-    cargo test {{FLAGS}}
-    cargo test --features unstable-builder {{FLAGS}}
+    cargo test --features pretty-print {{FLAGS}}
+    cargo test --features unstable-builder,pretty-print {{FLAGS}}
 
 benchmark *FLAGS: 
-    cargo criterion {{FLAGS}}
+    cargo criterion --features pretty-print {{FLAGS}}
 
 ci-dev: lint format test
     cargo build --release

@@ -7,6 +7,7 @@ authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
 description = "Small tool to convert askama templates to htmf code"
+publish = false
 
 [dependencies]
 anyhow = "1.0.95"

@@ -79,7 +79,6 @@ impl Element {
                 tag,
                 attrs,
             } => {
-                f.write_str(&" ".repeat(indent * 4))?;
                 f.write_char('<')?;
                 escape::write_escaped_html(f, tag);
 
@@ -99,8 +98,6 @@ impl Element {
                 f.write_char('>')?;
             }
             Element::LeafTag { tag, attrs } => {
-                f.write_char('\n')?;
-                f.write_str(&" ".repeat(indent * 4))?;
                 f.write_char('<')?;
                 escape::write_escaped_html(f, tag);
 

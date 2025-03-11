@@ -10,16 +10,12 @@ where
     E: Into<Element>,
 {
     fn into_elements(self) -> Vec<Element> {
-        vec![self.into()]
-    }
-}
+        let element: Element = self.into();
+        if let Element::Fragment { children } = element {
+            return children;
+        }
 
-impl<E> IntoElements for Vec<E>
-where
-    E: Into<Element>,
-{
-    fn into_elements(self) -> Vec<Element> {
-        self.into_iter().map(Into::into).collect()
+        vec![element]
     }
 }
 

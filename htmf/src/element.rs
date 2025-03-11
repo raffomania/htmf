@@ -203,6 +203,18 @@ impl From<&String> for Element {
     }
 }
 
+impl<E> From<Vec<E>> for Element
+where
+    E: Into<Element>,
+{
+    fn from(value: Vec<E>) -> Self {
+        // Don't call `with()` here to avoid infinitely nested fragments
+        Element::Fragment {
+            children: value.into_iter().map(|e| e.into()).collect(),
+        }
+    }
+}
+
 impl From<Option<Element>> for Element {
     fn from(value: Option<Element>) -> Self {
         value.unwrap_or(Element::Nothing)

@@ -1,4 +1,4 @@
-mod all_attrs;
+pub(crate) mod all_attrs;
 mod all_tags;
 
 use crate::{

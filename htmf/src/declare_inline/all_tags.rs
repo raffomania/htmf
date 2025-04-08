@@ -5,15 +5,14 @@ use crate::element::Element;
 macro_rules! define_tag_function {
     ($tag:ident) => {
         pub fn $tag<Attrs: IntoAttrs, Children: IntoElements>(
-            value: Attrs,
-            children: Children,
+            attrs: Attrs,
+            with: Children,
         ) -> Element {
             Element::Tag {
                 tag: stringify!($tag),
-                attrs: value.into_attrs(),
-                children: Vec::new(),
+                attrs: attrs.into_attrs(),
+                children: with.into_elements(),
             }
-            .with(children)
         }
     };
 
@@ -28,15 +27,14 @@ macro_rules! define_tag_function {
 
     ($tag:ident, $tag_str:literal) => {
         pub fn $tag<Attrs: IntoAttrs, Children: IntoElements>(
-            value: Attrs,
-            children: Children,
+            attrs: Attrs,
+            with: Children,
         ) -> Element {
             Element::Tag {
                 tag: $tag_str,
-                attrs: value.into_attrs(),
-                children: Vec::new(),
+                attrs: attrs.into_attrs(),
+                children: with.into_elements(),
             }
-            .with(children)
         }
     };
 

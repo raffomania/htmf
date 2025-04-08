@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use anyhow::Result;
 use tl::{HTMLTag, Node, Parser};
@@ -9,31 +9,42 @@ mod tests;
 #[derive(clap::Parser)]
 struct Args {
     input: PathBuf,
+
+    #[clap(long)]
+    inline: bool,
 }
 
 fn main() -> Result<()> {
     let args = <Args as clap::Parser>::parse();
-    let code = convert_file(&args.input)?;
+    let code = convert_file(&args)?;
     print!("{code}");
 
     Ok(())
 }
 
-fn convert_file(file: &Path) -> anyhow::Result<String> {
-    let contents = std::fs::read_to_string(file)?;
+fn convert_file(Args { input, inline }: &Args) -> anyhow::Result<String> {
+    let contents = std::fs::read_to_string(input)?;
 
     let ast = tl::parse(&contents, tl::ParserOptions::default())?;
     let parser = ast.parser();
 
-    let mut result = "use htmf::prelude::*;\n\npub fn view(data: &Data) -> Element {".to_string();
+    let mut result = if *inline {
+        "use htmf::prelude_inline::*;\n\npub fn view(data: &Data) -> Element {".to_string()
+    } else {
+        "use htmf::prelude::*;\n\npub fn view(data: &Data) -> Element {".to_string()
+    };
     if ast.children().len() > 1 {
-        result.push_str("fragment().with([");
+        if *inline {
+            result.push_str("fragment([");
+        } else {
+            result.push_str("fragment().with([");
+        }
     }
     for child in ast.children() {
         let Some(child) = child.get(parser) else {
             continue;
         };
-        if let Some(cc) = convert_node(child, parser, ast.children().len() == 1)? {
+        if let Some(cc) = convert_node(child, parser, ast.children().len() == 1, *inline)? {
             result.push_str(&cc);
             result.push_str(",\n");
         }
@@ -46,9 +57,14 @@ fn convert_file(file: &Path) -> anyhow::Result<String> {
     Ok(result)
 }
 
-fn convert_node(child: &Node, parser: &Parser, only_child: bool) -> Result<Option<String>> {
+fn convert_node(
+    child: &Node,
+    parser: &Parser,
+    only_child: bool,
+    inline: bool,
+) -> Result<Option<String>> {
     let code = match child {
-        tl::Node::Tag(tag) => Some(convert_tag(tag, parser)?),
+        tl::Node::Tag(tag) => Some(convert_tag(tag, parser, inline)?),
         tl::Node::Raw(bytes) => {
             let s = bytes.as_utf8_str();
             let s = s.trim();
@@ -73,7 +89,7 @@ fn convert_node(child: &Node, parser: &Parser, only_child: bool) -> Result<Optio
     Ok(code)
 }
 
-fn convert_tag(tag: &HTMLTag, parser: &Parser) -> Result<String> {
+fn convert_tag(tag: &HTMLTag, parser: &Parser, inline: bool) -> Result<String> {
     let mut attr_code = String::new();
     let many_attrs = tag.attributes().len() > 1;
     if many_attrs {
@@ -93,19 +109,28 @@ fn convert_tag(tag: &HTMLTag, parser: &Parser) -> Result<String> {
         attr_code.push(']');
     }
 
-    let mut code = format!("{}({attr_code})", tag.name().as_utf8_str());
-
     let multiple_children = tag.children().top().len() > 1;
     let mut child_code = String::new();
     for child in tag.children().top().iter() {
-        if let Some(cc) = convert_node(child.get(parser).unwrap(), parser, !multiple_children)? {
+        if let Some(cc) = convert_node(
+            child.get(parser).unwrap(),
+            parser,
+            !multiple_children,
+            inline,
+        )? {
             child_code.push_str(&cc);
             if multiple_children {
                 child_code.push_str(",\n");
             }
         }
     }
-    if !child_code.is_empty() {
+    if inline {
+        if child_code.is_empty() {
+            child_code = "()".to_string();
+        } else if multiple_children {
+            child_code = format!("[{child_code}]");
+        }
+    } else if !child_code.is_empty() {
         if multiple_children {
             child_code = format!(".with([{child_code}])");
         } else {
@@ -113,7 +138,11 @@ fn convert_tag(tag: &HTMLTag, parser: &Parser) -> Result<String> {
         }
     }
 
-    code.push_str(&child_code);
+    let code = if inline {
+        format!("{}({attr_code}, {child_code})", tag.name().as_utf8_str())
+    } else {
+        format!("{}({attr_code}){child_code}", tag.name().as_utf8_str())
+    };
 
     Ok(code)
 }

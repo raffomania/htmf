@@ -1,4 +1,1 @@
-{
-    "rust-analyzer.cargo.features": ["unstable-builder", "pretty-print"],
-    "rust-analyzer.check.features": ["unstable-builder", "pretty-print"]
-}
+{}

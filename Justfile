@@ -12,6 +12,9 @@ lint *args:
     cargo clippy {{args}} -- -D warnings
     cargo semver-checks
 
+mutants *args:
+    cargo mutants --all-features {{args}}
+
 format:
     cargo +nightly fmt --all -- --check
 

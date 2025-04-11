@@ -1,0 +1,14 @@
+---
+source: htmf/src/builder.rs
+expression: html
+---
+<!DOCTYPE html>
+<html class="w-full h-full">
+  <head><meta name="color-scheme" content="dark" /></head>
+  <body class="w-full h-full text-gray-200 bg-neutral-800">
+    <main class="sm:overflow-y-auto sm:grow">
+      <p>My cool content</p>
+      <aside id="nav"></aside>
+    </main>
+  </body>
+</html>

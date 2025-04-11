@@ -8,6 +8,32 @@
 - Don't render a closing tag for [void elements](https://developer.mozilla.org/en-US/docs/Glossary/Void_element).
 - Replace implementation of `IntoElements for Vec<Into<Element>>` with implementation of `From<Vec<Into<Element>>> for Element` to allow easily creating fragments in a list of children
 
+### Added
+
+Introduce the `declare_inline` module:
+
+```rs
+use htmf::prelude_inline::*;
+
+body(
+    class("w-full h-full text-gray-200 bg-neutral-800"),
+    [
+        p([], text("bonjour")),
+        label(
+            [for_("credentials[username]")],
+            "Username",
+        ),
+        input([
+            type_("text"),
+            name("credentials[username]"),
+            required("true"),
+        ]),
+    ],
+),
+```
+
+This style will generally get formatted with more newlines, but makes it easier to visually parse the tree structure of the declared markup.
+
 # Changelog
 
 ## [0.2.0] - 2025-01-21

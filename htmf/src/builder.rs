@@ -174,6 +174,23 @@ impl Builder {
         let root = self.into_root_element();
         root.to_html()
     }
+
+    #[cfg(feature = "pretty-print")]
+    pub fn to_html_pretty(
+        self,
+    ) -> Result<String, markup_fmt::FormatError<std::convert::Infallible>> {
+        let raw = self.to_html();
+        markup_fmt::format_text(
+            &raw,
+            markup_fmt::Language::Html,
+            &markup_fmt::config::FormatOptions::default(),
+            |code, _| Ok::<_, std::convert::Infallible>(code.into()),
+        )
+        .inspect_err(|e| {
+            println!("{raw}");
+            println!("{e}");
+        })
+    }
 }
 
 // -- Trait impls
@@ -206,7 +223,8 @@ mod tests {
                     .with([p([]).with("My cool content"), aside(id("nav"))]),
             ),
         ])]);
-        let html = doc.clone().to_html();
+        let html = doc.clone().to_html_pretty().unwrap();
+        insta::assert_snapshot!(html);
         use pretty_assertions::assert_eq;
 
         let doc_builder = document()
@@ -214,10 +232,9 @@ mod tests {
             .with([head([]).with([meta([name("color-scheme"), content("dark")])])])
             .body(class("w-full h-full text-gray-200 bg-neutral-800"))
             .main_(class("sm:overflow-y-auto sm:grow"))
-            .with([p([]).with("My cool content"), aside(id("nav"))])
-            .into_root_element();
-        let builder_html = doc_builder.to_html();
+            .with([p([]).with("My cool content"), aside(id("nav"))]);
+        let builder_html = doc_builder.clone().to_html_pretty().unwrap();
         assert_eq!(html, builder_html);
-        assert_eq!(doc, doc_builder);
+        assert_eq!(doc, doc_builder.into_root_element());
     }
 }

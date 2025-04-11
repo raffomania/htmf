@@ -7,7 +7,7 @@ expression: html
   <head><meta name="color-scheme" content="dark" /></head>
   <body class="w-full h-full text-gray-200 bg-neutral-800">
     <main class="sm:overflow-y-auto sm:grow">
-      <p>My cool content</p>
+      <p hx-trigger="click">My cool content</p>
       <aside id="nav"></aside>
     </main>
   </body>

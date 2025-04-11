@@ -72,7 +72,7 @@ impl Element {
         self
     }
 
-    pub fn write_html(&self, f: &mut std::fmt::Formatter<'_>, indent: usize) -> std::fmt::Result {
+    pub fn write_html(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Element::Tag {
                 children,
@@ -90,7 +90,7 @@ impl Element {
 
                 f.write_char('>')?;
 
-                Self::write_children_html(f, children, indent + 1)?;
+                Self::write_children_html(f, children)?;
 
                 f.write_char('<')?;
                 f.write_char('/')?;
@@ -111,14 +111,14 @@ impl Element {
                 f.write_char('>')?;
             }
             Element::Fragment { children } => {
-                Self::write_children_html(f, children, indent)?;
+                Self::write_children_html(f, children)?;
             }
             Element::Text { text } => {
                 escape::write_escaped_html(f, text);
             }
             Element::Document { children } => {
                 f.write_str("<!doctype html>")?;
-                Self::write_children_html(f, children, indent)?;
+                Self::write_children_html(f, children)?;
             }
             Element::Nothing => {}
         };
@@ -129,14 +129,13 @@ impl Element {
     fn write_children_html(
         f: &mut std::fmt::Formatter<'_>,
         children_with_empty: &[Element],
-        indent: usize,
     ) -> std::fmt::Result {
         let children = children_with_empty
             .iter()
             .filter(|c| !matches!(c, Element::Nothing));
 
         for child in children {
-            child.write_html(f, indent)?;
+            child.write_html(f)?;
         }
 
         Ok(())
@@ -175,7 +174,7 @@ impl Element {
 
 impl std::fmt::Display for Element {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.write_html(f, 0)
+        self.write_html(f)
     }
 }
 

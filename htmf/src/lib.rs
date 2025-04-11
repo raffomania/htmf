@@ -43,6 +43,7 @@ mod tests {
                     .with("Password"),
                     input([
                         type_("password"),
+                        attr("hx-post", "/validate-password"),
                         name("credentials[password]"),
                         class("rounded py-1.5 px-3 mt-2 bg-neutral-900"),
                         required("true"),
@@ -50,8 +51,10 @@ mod tests {
                 ]),
             ]),
         ])]);
-        let html = doc.clone().to_html_pretty().unwrap();
+        let html = doc.clone().to_html();
         insta::assert_snapshot!(html);
+        let formatted = doc.clone().to_html_pretty().unwrap();
+        insta::assert_snapshot!(formatted);
     }
 
     #[test]

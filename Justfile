@@ -13,7 +13,7 @@ lint *args:
     cargo semver-checks
 
 mutants *args:
-    cargo mutants --all-features {{args}}
+    cargo mutants --all-features --package htmf {{args}}
 
 format:
     cargo +nightly fmt --all -- --check

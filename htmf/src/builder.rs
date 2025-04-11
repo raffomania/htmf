@@ -219,8 +219,10 @@ mod tests {
         let doc = document().with([html(class("w-full h-full")).with([
             head([]).with([meta([name("color-scheme"), content("dark")])]),
             body(class("w-full h-full text-gray-200 bg-neutral-800")).with(
-                main_(class("sm:overflow-y-auto sm:grow"))
-                    .with([p([]).with("My cool content"), aside(id("nav"))]),
+                main_(class("sm:overflow-y-auto sm:grow")).with([
+                    p([attr("hx-trigger", "click")]).with("My cool content"),
+                    aside(id("nav")),
+                ]),
             ),
         ])]);
         let html = doc.clone().to_html_pretty().unwrap();
@@ -232,7 +234,10 @@ mod tests {
             .with([head([]).with([meta([name("color-scheme"), content("dark")])])])
             .body(class("w-full h-full text-gray-200 bg-neutral-800"))
             .main_(class("sm:overflow-y-auto sm:grow"))
-            .with([p([]).with("My cool content"), aside(id("nav"))]);
+            .with([
+                p([]).with("My cool content").attr("hx-trigger", "click"),
+                aside(id("nav")),
+            ]);
         let builder_html = doc_builder.clone().to_html_pretty().unwrap();
         assert_eq!(html, builder_html);
         assert_eq!(doc, doc_builder.into_root_element());

@@ -33,10 +33,17 @@ fn run(c: &mut Criterion) {
     group.bench_function("deep", |b| {
         b.iter(|| {
             let mut elem = div([]);
-            for _ in 0..10_000 {
+            for _ in 0..1_000 {
                 elem = div([]).with(elem);
             }
             html([]).with(body([]).with(elem)).to_html();
+        });
+    });
+
+    group.bench_function("wide_attrs", |b| {
+        b.iter(|| {
+            let attrs = (0..1_000).map(|_| class("mx-4")).collect::<Vec<_>>();
+            div(attrs).to_html();
         });
     });
 

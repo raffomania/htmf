@@ -37,6 +37,7 @@ This style will generally get formatted with more newlines, but makes it easier 
 Other changes:
 
 - Allow passing `Vec`s of attributes to element functions
+- Allow passing `ToString` values as attributes
 
 # Changelog
 

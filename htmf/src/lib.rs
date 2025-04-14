@@ -36,7 +36,7 @@ mod tests {
                 p([]).with(text("bonjour")),
                 fragment().with([
                     div([]).with(fragment()),
-                    label([
+                    label(vec![
                         class("mt-4 text-neutral-400"),
                         for_("credentials[password]"),
                     ])

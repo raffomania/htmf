@@ -34,6 +34,10 @@ body(
 
 This style will generally get formatted with more newlines, but makes it easier to visually parse the tree structure of the declared markup.
 
+Other changes:
+
+- Allow passing `Vec`s of attributes to element functions
+
 # Changelog
 
 ## [0.2.0] - 2025-01-21

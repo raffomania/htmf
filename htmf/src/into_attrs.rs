@@ -33,3 +33,9 @@ impl IntoAttrs for Option<Attrs> {
         Attrs(self.into_iter().flat_map(|attrs| attrs.0).collect())
     }
 }
+
+impl IntoAttrs for Vec<Attrs> {
+    fn into_attrs(self) -> Attrs {
+        Attrs(self.into_iter().flat_map(|attrs| attrs.0).collect())
+    }
+}

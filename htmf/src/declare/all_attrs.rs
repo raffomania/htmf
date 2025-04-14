@@ -7,9 +7,9 @@ macro_rules! define_attr_function {
     ($name:ident, $key:literal) => {
         pub fn $name<C>(value: C) -> Attrs
         where
-            C: Into<String>,
+            C: ToString,
         {
-            Attrs(vec![Attr($key, value.into())])
+            Attrs(vec![Attr($key, value.to_string())])
         }
     };
     ($name:ident, $key:literal, $value:literal) => {

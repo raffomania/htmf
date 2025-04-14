@@ -48,6 +48,7 @@ mod tests {
                         class("rounded py-1.5 px-3 mt-2 bg-neutral-900"),
                         required("true"),
                     ]),
+                    input([value(10), type_("number")]),
                 ]),
             ]),
         ])]);

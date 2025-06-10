@@ -38,11 +38,11 @@ pub struct Builder {
 }
 
 impl Builder {
-    pub fn with<C>(mut self, new_children: C) -> Builder
+    pub fn with<C>(mut self, value: C) -> Builder
     where
         C: IntoElements,
     {
-        self.element = self.element.with(new_children);
+        self.element = self.element.with(value);
         self
     }
 

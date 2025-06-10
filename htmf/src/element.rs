@@ -51,11 +51,11 @@ impl Element {
         })
     }
 
-    pub fn with<C>(mut self, new_children: C) -> Self
+    pub fn with<C>(mut self, value: C) -> Self
     where
         C: IntoElements,
     {
-        let mut new_children = new_children.into_elements();
+        let mut new_children = value.into_elements();
         if let Some(children) = self.children_mut() {
             children.append(&mut new_children);
         }

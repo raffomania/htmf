@@ -29,8 +29,6 @@ a([href("https://www.rafa.ee"), class("link")])
 
 ## Getting Started
 
-Coming soon: ways to import htmf, defining attributes, defining contents, converting to html.
-
 After adding htmf to your dependencies, you can get started by declaring a document:
 
 ```rust
@@ -111,7 +109,7 @@ p(Some(class("prose")));
 p(None);
 ```
 
-### Custom Attributes
+Coming soon: ways to import htmf, defining attributes, defining contents, converting to html.
 
 ## Tips for Working with htmf
 

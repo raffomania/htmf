@@ -93,6 +93,7 @@ impl Builder {
             },
             Element::Text { .. } => return self,
             Element::Nothing => return self,
+            Element::UnsafeRawHtml { .. } => return self,
         };
 
         Builder { element, parent }

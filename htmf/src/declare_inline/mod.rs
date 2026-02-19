@@ -39,3 +39,10 @@ where
 {
     Attrs(vec![Attr(name, value.into())])
 }
+
+pub fn unsafe_raw_html<C>(value: C) -> Element
+where
+    C: Into<String>,
+{
+    Element::UnsafeRawHtml { html: value.into() }
+}

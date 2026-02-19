@@ -14,6 +14,8 @@ pub mod prelude_inline;
 
 #[cfg(test)]
 mod tests {
+    use crate::escape::write_escaped_html;
+
     use super::*;
 
     #[test]
@@ -105,5 +107,22 @@ mod tests {
         )]);
         let html = doc.clone().to_html_pretty().unwrap();
         insta::assert_snapshot!(html);
+    }
+
+    #[test]
+    fn unsafe_raw_html() {
+        use declare_inline::*;
+
+        let inner_html = "<p><strong>Whoa!</strong></p>";
+
+        // Escaped by default
+        let rendered = div((), inner_html).to_html();
+        let mut escaped = String::new();
+        write_escaped_html(&mut escaped, inner_html);
+        assert_eq!(rendered, format!("<div>{escaped}</div>"));
+
+        // Not escaped with `unsafe_raw_html`
+        let rendered = div((), unsafe_raw_html(inner_html)).to_html();
+        assert_eq!(rendered, format!("<div>{inner_html}</div>"));
     }
 }

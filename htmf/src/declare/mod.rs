@@ -50,6 +50,13 @@ pub fn nothing() -> Element {
     Element::Nothing
 }
 
+pub fn unsafe_raw_html<C>(value: C) -> Element
+where
+    C: Into<String>,
+{
+    Element::UnsafeRawHtml { html: value.into() }
+}
+
 pub fn attr<C>(name: &'static str, value: C) -> Attrs
 where
     C: Into<String>,

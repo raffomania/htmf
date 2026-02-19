@@ -26,6 +26,9 @@ pub enum Element {
     Text {
         text: String,
     },
+    UnsafeRawHtml {
+        html: String,
+    },
     Nothing,
 }
 
@@ -120,6 +123,9 @@ impl Element {
                 f.write_str("<!doctype html>")?;
                 Self::write_children_html(f, children)?;
             }
+            Element::UnsafeRawHtml { html } => {
+                f.write_str(html)?;
+            }
             Element::Nothing => {}
         };
 
@@ -153,6 +159,7 @@ impl Element {
             Element::Document { children } => Some(children),
             Element::Nothing => None,
             Element::LeafTag { .. } => None,
+            Element::UnsafeRawHtml { .. } => None,
         }
     }
 
@@ -168,6 +175,7 @@ impl Element {
             Element::Document { children: _ } => None,
             Element::Nothing => None,
             Element::LeafTag { attrs, .. } => Some(&mut attrs.0),
+            Element::UnsafeRawHtml { .. } => None,
         }
     }
 }

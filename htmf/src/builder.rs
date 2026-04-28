@@ -213,7 +213,7 @@ impl From<Element> for Builder {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::*;
+    use crate::prelude_builder::*;
 
     #[test]
     fn base() {

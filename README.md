@@ -5,9 +5,11 @@ Functions for generating HTML from Rust in a declarative fashion:
 ```rust
 use htmf::prelude::*;
 
-a([href("https://www.rafa.ee"), class("link")])
-    .with(text("My Site"))
-    .to_html();
+a(
+    [href("https://www.rafa.ee"), class("link")],
+    text("My Site"),
+)
+.to_html();
 ```
 
 Status: beta. The API might change in backwards-incompatible ways, but I mostly like how it works and am using it in [a serious project](github.com/raffomania/ties/).
@@ -34,16 +36,19 @@ After adding htmf to your dependencies, you can get started by declaring a docum
 ```rust
 use htmf::prelude::*;
 
-document().with(html([]).with([
-    head([]).with([
-        meta([
-            name("viewport"), 
-            content("width=device-width,initial-scale=1")
-        ]),
-    ]), 
-    body([class("mx-auto mw-xl")])
-        .with(main_([]))
-]));
+document(html(
+    [],
+    [
+        head(
+            [],
+            [meta([
+                name("viewport"),
+                content("width=device-width,initial-scale=1"),
+            ])],
+        ),
+        body([class("mx-auto mw-xl")], main_([], [text("Hello htmf!")])),
+    ],
+));
 ```
 
 - htmf provides functions for creating any of the common HTML tags. Tag names conflicting with Rust keywords include a trailing `_` in their name (e.g. `main_`).
@@ -57,35 +62,37 @@ If you prefer to avoid glob imports, you can import htmf modules explicitly:
 ```rust
 use htmf::prelude as h;
 
-h::document();
+h::document(());
 ```
 
 ### Defining Elements
 
-The `with` method accepts anything implementing the `IntoElements` trait, including single items implementing `Into<Element>`:
+Tag functions accept anything that implements `IntoElements` or `Into<Element>`:
 
 ```rust
 use htmf::prelude::*;
 
-// Arrays
-ul([]).with([li([]), li([])]);
-
 // Single elements
-div([]).with(p([]));
+p([], text("Bonjour!"));
 
-// Vectors
-ul([]).with(vec![li([]), li([])]);
+// Arrays & Vectors
+ul([], [li([], "one"), li([], "two")]);
+ul([], vec![li([], "three"), li([], "four")]);
 
-// Strings
-p([]).with("I'm a string!");
-p([]).with("I'm a string!".to_string());
+// Strings are automatically converted to `text` elements
+p([], text("I'm a text element!"));
+p([], "I'm a string slice!");
+p([], "I'm a string!".to_string());
 
 // ()
-div([]).with(());
+div([], ());
 
 // Options
-div([]).with(Some(button([])));
-div([]).with(None);
+div([], Some(button([], "press me")));
+div([], None);
+
+// nothing() works like `None` or `()`, but is of type `Element`
+div([], nothing());
 ```
 
 ### Defining Attributes
@@ -96,17 +103,17 @@ Tag functions accept anything implementing the `IntoAttrs` trait:
 use htmf::prelude::*;
 
 // Arrays
-p([class("prose")]);
+p([class("prose")], "text");
 
 // Single attributes
-p(class("prose"));
+p(class("prose"), "text");
 
 // ()
-p(());
+p((), "empty!");
 
 // Options
-p(Some(class("prose")));
-p(None);
+p(Some(class("prose")), "some attribute");
+p(None, "no attribute");
 ```
 
 Coming soon: ways to import htmf, defining attributes, defining contents, converting to html.

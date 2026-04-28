@@ -10,7 +10,7 @@ mod escape;
 pub mod into_attrs;
 pub mod into_elements;
 pub mod prelude;
-pub mod prelude_inline;
+pub mod prelude_builder;
 
 #[cfg(test)]
 mod tests {

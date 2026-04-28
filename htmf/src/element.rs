@@ -230,7 +230,7 @@ impl From<Option<Element>> for Element {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::*;
+    use crate::prelude_builder::*;
 
     #[test]
     fn nothing_element() {

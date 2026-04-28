@@ -1,7 +1,5 @@
 # hypertext markup functions
 
-⚠️ Warning: This is beta-quality software. The API will undergo significant changes.
-
 Functions for generating HTML from Rust in a declarative fashion:
 
 ```rust
@@ -11,6 +9,8 @@ a([href("https://www.rafa.ee"), class("link")])
     .with(text("My Site"))
     .to_html();
 ```
+
+Status: beta. The API might change in backwards-incompatible ways, but I mostly like how it works and am using it in [a serious project](github.com/raffomania/ties/).
 
 ## Advantages
 

@@ -84,15 +84,21 @@ p([], text("I'm a text element!"));
 p([], "I'm a string slice!");
 p([], "I'm a string!".to_string());
 
-// ()
-div([], ());
-
 // Options
 div([], Some(button([], "press me")));
 div([], None);
 
 // nothing() works like `None` or `()`, but is of type `Element`
 div([], nothing());
+div([], [
+    h1([], "My Blog"),
+    // Everything in this array needs type `Element`, so we need to use `nothing`
+    // instead of `Option`
+    Some(5).map_or_else(nothing, |article_count| p([], format!("{article_count} articles")))
+]);
+
+// ()
+div([], ());
 ```
 
 ### Defining Attributes
